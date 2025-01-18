@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rain Town Player</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #d3dbd5;
+    }
+    .player-container {
+      width: 320px;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .top-section {
+      background-color: #94a89b;
+      height: 120px;
+      position: relative;
+    }
+    .top-section img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .share-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+    }
+    .details-section {
+      background-color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .details-section h1 {
+      margin: 0;
+      font-size: 20px;
+      color: #333;
+    }
+    .details-section p {
+      margin: 5px 0 20px;
+      font-size: 14px;
+      color: #666;
+    }
+    .audio-player {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="player-container">
+    <div class="top-section">
+      <img src="https://via.placeholder.com/320x120?text=Rain+Effect" alt="Rain Effect">
+      <img class="share-icon" src="https://via.placeholder.com/24?text=🔗" alt="Share">
+    </div>
+    <div class="details-section">
+      <h1>Rain Town</h1>
+      <p>The Storms</p>
+      <audio class="audio-player" controls>
+        <source src="https://<tu-repo>.github.io/AU1.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+      </audio>
+    </div>
+  </div>
+</body>
+</html>

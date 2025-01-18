@@ -15,20 +15,26 @@
       background-color: #d3dbd5;
     }
     .player-container {
-      width: 320px;
+      width: 300px; /* Tamaño del contenedor general */
       border-radius: 15px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
     .top-section {
       background-color: #94a89b;
-      height: 120px;
+      width: 100%; /* Aseguramos que el contenedor sea del 100% de ancho */
+      height: 0;
+      padding-top: 100%; /* Esto hará que el contenedor sea cuadrado */
       position: relative;
+      overflow: hidden; /* Recorta cualquier exceso de imagen fuera del contenedor */
     }
     .top-section img {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: cover; /* Hace que la imagen cubra el contenedor sin deformarse */
     }
     .share-icon {
       position: absolute;
@@ -102,7 +108,6 @@
   <div class="player-container">
     <div class="top-section">
       <img id="image" src="https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen001.jpg" alt="Rain Effect">
-      <img class="share-icon" src="https://via.placeholder.com/24?text=🔗" alt="Share">
     </div>
     <div class="details-section">
       <h1>El terror de la selva</h1>
@@ -118,10 +123,15 @@
     function checkCode() {
       const code = document.getElementById("codeInput").value;
       if (code === "0000") {
+        alert("Código correcto, archivo de auido encontrado.")
         document.getElementById("lockScreen").style.display = "none";
       } else if (code === "1234") {
+        alert("Código correcto, archivo de auido encontrado.")
+        document.getElementById("lockScreen").style.display = "none";
         changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen002.jpg", "https://oscarjante.github.io/SanValentin1.0/250108.ROMA.mp3", "Roma");
       } else if (code === "5678") {
+        alert("Código correcto, archivo de auido encontrado.")
+        document.getElementById("lockScreen").style.display = "none";
         changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/250108.OTRO.mp3", "Otro");
       } else {
         alert("Código incorrecto, intenta nuevamente.");

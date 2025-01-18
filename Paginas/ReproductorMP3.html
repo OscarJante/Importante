@@ -13,12 +13,14 @@
       align-items: center;
       height: 100vh;
       background-color: #d3dbd5;
+      flex-direction: column; /* Cambiado para permitir alinear elementos verticalmente */
     }
     .player-container {
       width: 300px; /* Tamaño del contenedor general */
       border-radius: 15px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      margin-bottom: 10px; /* Reducido el espacio entre el reproductor y el botón */
     }
     .top-section {
       background-color: #94a89b;
@@ -94,6 +96,22 @@
     .lock-screen button:hover {
       background-color: #45a049;
     }
+    /* Estilos para el botón "Buscar un nuevo audio" */
+    .refresh-btn {
+      background-color: #7f9a93; /* Un tono más fuerte del color de fondo */
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      width: 100%; /* Ancho al 100% del contenedor */
+      margin-top: 10px; /* Reducido el margen superior para acercarlo más */
+    }
+
+    .refresh-btn:hover {
+      background-color: #6a7e77; /* Un tono más oscuro al pasar el ratón */
+    }
   </style>
 </head>
 <body>
@@ -119,6 +137,9 @@
     </div>
   </div>
 
+  <!-- Botón "Buscar un nuevo audio" -->
+  <button class="refresh-btn" onclick="window.location.reload();">Buscar un nuevo audio</button>
+
   <script>
     function checkCode() {
       const code = document.getElementById("codeInput").value;
@@ -132,7 +153,7 @@
       } else if (code === "666") {
         alert("Código correcto, archivo de auido encontrado.")
         document.getElementById("lockScreen").style.display = "none";
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen001.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250108-01.mp3", "El terror de la selva");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen001.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-01.mp3", "El terror de la selva");
       } else {
         alert("Código incorrecto, intenta nuevamente.");
       }

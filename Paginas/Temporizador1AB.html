@@ -58,6 +58,16 @@
         .whatsapp-btn:hover {
             background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
         }
+
+        /* Estilos para la imagen */
+        .image-container {
+            margin-top: 20px;
+        }
+
+        .image-container img {
+            max-width: 80%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -65,6 +75,11 @@
         <h1>Parte I: Cumpleaños</h1>
         <div id="start-time"></div>
         <div id="end-time"></div>
+
+        <!-- Imagen desde repositorio de GitHub -->
+        <div class="image-container">
+            <img src="https://raw.githubusercontent.com/usuario/repositorio/main/imagen.png" alt="Imagen de ejemplo">
+        </div>
     </div>
 
     <!-- Botón de WhatsApp -->
@@ -87,9 +102,9 @@
         }
 
         const startTime = formatAMPM(now); // Hora de inicio
-        const endTime = formatAMPM(new Date(now.getTime() + 0 * 60 * 1000)); // Hora de finalización (8 minutos después)
+        const endTime = formatAMPM(new Date(now.getTime() + 8 * 60 * 1000)); // Hora de finalización (8 minutos después)
 
-        document.getElementById('start-time').textContent = `Estos temporizadores son una guia, para esta parte empezaste a las ${startTime} y deberías pensar en pedir ayuda a las ${endTime}, cada ayuda tiene un costo que sugiero siempre veas al empezar, para que veas la dinamica este primero es obligatorio pedir ayuda`;
+        document.getElementById('start-time').textContent = `Este icono son temporizadores de guia para pedir ayuda, cada ayuda tiene un costo que sugiero siempre veas al empezar :D, para conocer la dinamica es obligatorio pedir ayuda esta ocasion`;
     </script>
 </body>
 </html>

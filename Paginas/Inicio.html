@@ -101,14 +101,14 @@
 
   <div class="player-container">
     <div class="top-section">
-      <img src="https://oscarjante.github.io/SanValentin1.0/Imagen001.jpg" alt="Rain Effect">
+      <img id="image" src="https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen001.jpg" alt="Rain Effect">
       <img class="share-icon" src="https://via.placeholder.com/24?text=🔗" alt="Share">
     </div>
     <div class="details-section">
       <h1>El terror de la selva</h1>
       <p>Alfa</p>
-      <audio class="audio-player" controls>
-        <source src="https://oscarjante.github.io/SanValentin1.0/250108.VERDE.mp3" type="audio/mp3">
+      <audio class="audio-player" id="audioPlayer" controls>
+        <source id="audioSource" src="https://oscarjante.github.io/SanValentin1.0/Audios/250108.VERDE.mp3" type="audio/mp3">
         Your browser does not support the audio element.
       </audio>
     </div>
@@ -119,9 +119,20 @@
       const code = document.getElementById("codeInput").value;
       if (code === "0000") {
         document.getElementById("lockScreen").style.display = "none";
+      } else if (code === "1234") {
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen002.jpg", "https://oscarjante.github.io/SanValentin1.0/250108.ROMA.mp3", "Roma");
+      } else if (code === "5678") {
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/250108.OTRO.mp3", "Otro");
       } else {
         alert("Código incorrecto, intenta nuevamente.");
       }
+    }
+
+    function changeMedia(imageUrl, audioUrl, title) {
+      document.getElementById("image").src = imageUrl;
+      document.getElementById("audioSource").src = audioUrl;
+      document.getElementById("audioPlayer").load();
+      document.querySelector(".details-section h1").innerText = title;
     }
   </script>
 </body>

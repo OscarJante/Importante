@@ -156,29 +156,30 @@
       if (code === "M2Z") {
         alert("Código correcto, archivo de audio encontrado.")
         document.getElementById("lockScreen").style.display = "none";
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-03.mp3", "Material extra 02");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-03.mp3", "Material extra", "Material 02");
       } else if (code === "0420") {
         alert("Código correcto, archivo de audio encontrado.")
         document.getElementById("lockScreen").style.display = "none";
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-02.mp3", "Material extra 01");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-02.mp3", "Material extra", "Material 01");
       } else if (code === "666") {
         alert("Código correcto, archivo de audio encontrado.")
         document.getElementById("lockScreen").style.display = "none";
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen001.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-01.mp3", "El terror de la selva");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen001.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-01.mp3", "Historias de miedo", "El terror de la selva");
       } else if (code === "0001") {
         alert("Código correcto, archivo de audio encontrado.")
         document.getElementById("lockScreen").style.display = "none";
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen005.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-04.mp3", "La radio (¿Cual es la cancion?)");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen005.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-04.mp3", "La radio", "¿Cual es la cancion?");
       } else {
         alert("Código incorrecto, intenta nuevamente.");
       }
     }
 
-    function changeMedia(imageUrl, audioUrl, title) {
+    function changeMedia(imageUrl, audioUrl, title, subtitle) {
       document.getElementById("image").src = imageUrl;
       document.getElementById("audioSource").src = audioUrl;
       document.getElementById("audioPlayer").load();
-      document.querySelector(".details-section p").innerText = title;
+      document.querySelector(".details-section h1").innerText = title;
+      document.querySelector(".details-section p").innerText = subtitle;
     }
   </script>
 </body>

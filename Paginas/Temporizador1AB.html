@@ -87,9 +87,9 @@
         }
 
         const startTime = formatAMPM(now); // Hora de inicio
-        const endTime = formatAMPM(new Date(now.getTime() + 8 * 60 * 1000)); // Hora de finalización (8 minutos después)
+        const endTime = formatAMPM(new Date(now.getTime() + 0 * 60 * 1000)); // Hora de finalización (8 minutos después)
 
-        document.getElementById('start-time').textContent = `Inicio a las ${startTime} y a esta hora deberías pensar en pedir ayuda: ${endTime}`;
+        document.getElementById('start-time').textContent = `Estos temporizadores son una guia, para esta parte empezaste a las ${startTime} y deberías pensar en pedir ayuda a las ${endTime}, cada ayuda tiene un costo que sugiero siempre veas al empezar, para que veas la dinamica este primero es obligatorio pedir ayuda`;
     </script>
 </body>
 </html>

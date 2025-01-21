@@ -13,164 +13,131 @@
       align-items: center;
       height: 100vh;
       background-color: #d3dbd5;
-      flex-direction: column;
     }
-    .player-container {
-      width: 300px;
+    .container {
+      display: flex;
+      background-color: #e3e9e5;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      width: 80%;
+      max-width: 900px;
+      height: 80%;
+    }
+    .left-section {
+      flex: 1;
+      background-color: #2c3e50;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .left-section h1 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .left-section p {
+      font-size: 1.2rem;
+      margin: 10px 0 0;
+      text-align: center;
+      line-height: 1.5;
+    }
+    .right-section {
+      flex: 1;
+      background-color: #f6f6f6;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .right-section img {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 10px;
       border-radius: 15px;
       overflow: hidden;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      margin-bottom: 10px;
-    }
-    .top-section {
-      background-color: #94a89b;
-      width: 100%;
-      height: 0;
-      padding-top: 100%;
-      position: relative;
-      overflow: hidden;
-    }
-    .top-section img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .details-section {
-      background-color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    .details-section h1 {
-      margin: 0;
-      font-size: 20px;
-      color: #333;
-    }
-    .details-section p {
-      margin: 5px 0 20px;
-      font-size: 14px;
-      color: #666;
     }
     .audio-player {
       width: 100%;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      border-radius: 15px;
     }
+.search-container {
+  width: 100%;
+  max-width: 300px;
+  display: flex; /* Cambia el diseño a flexbox */
+  align-items: center; /* Centra verticalmente */
+}
 
-    /* Pantalla de bloqueo */
-    .lock-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+.search-container input {
+  padding: 6px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  width: 75%; /* Ajusta el ancho del input */
+  box-sizing: border-box;
+  text-align: left;
+}
+
+.search-container button {
+  background-color: #7f9a93;
+  color: white;
+  padding: 5px;
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 30%; /* Ajusta el ancho del botón */
+}
+
     }
-
-    /* Diseño del formulario de ingreso de código */
-    .lock-screen div {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      text-align: center;
-    }
-
-    .lock-screen input {
-      padding: 15px;
-      font-size: 16px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      border: 1px solid #ccc;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .lock-screen button {
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      background-color: #4CAF50;
-      color: white;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    .lock-screen button:hover {
-      background-color: #45a049;
-    }
-
-    /* Estilos para el botón "Buscar un nuevo audio" */
-    .refresh-btn {
-      background-color: #7f9a93;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 10px;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-      width: 100%;
-      margin-top: 10px;
-    }
-
-    .refresh-btn:hover {
+    .search-container button:hover {
       background-color: #6a7e77;
+      
     }
   </style>
 </head>
 <body>
-
-  <!-- Pantalla de bloqueo -->
-  <div class="lock-screen" id="lockScreen">
-    <div>
-      <input type="text" id="codeInput" placeholder="Numeros y/o letras con MAYUSCULAS"> <!-- Cambié el tipo de input a 'text' -->
-      <button onclick="checkCode()">Ingresar</button>
+  <div class="container">
+    <div class="left-section">
+      <h1>Reproductor de audios</h1>
+      <p>En esta seccion podras buscar audios que te den mas pistas para resolver los acertijos.</p>
     </div>
-  </div>
-
-  <div class="player-container">
-    <div class="top-section">
+    <div class="right-section">
       <img id="image" src="https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen000.jpg" alt="Rain Effect">
-    </div>
-    <div class="details-section">
-      <h1>Reproductor de audio</h1>
-      <p>En espera de código</p>
       <audio class="audio-player" id="audioPlayer" controls>
         <source id="audioSource" src="https://oscarjante.github.io/SanValentin1.0/Audios/250108-01.mp3" type="audio/mp3">
         Your browser does not support the audio element.
       </audio>
+      <div class="search-container">
+        <input type="text" id="codeInput" placeholder="Ingresa el código aquí">
+        <button onclick="checkCode()">Buscar</button>
+      </div>
     </div>
   </div>
-
-  <!-- Botón "Buscar un nuevo audio" -->
-  <button class="refresh-btn" onclick="window.location.reload();">Buscar un nuevo audio</button>
 
   <script>
     function checkCode() {
       const code = document.getElementById("codeInput").value;
       if (code === "M2Z") {
-        alert("Código correcto, archivo de audio encontrado.")
-        document.getElementById("lockScreen").style.display = "none";
+        alert("Código correcto ✔️");
         changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-03.mp3", "Material extra", "Material 02");
       } else if (code === "0420") {
-        alert("Código correcto, archivo de audio encontrado.")
-        document.getElementById("lockScreen").style.display = "none";
+        alert("Código correcto ✔️");
         changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-02.mp3", "Material extra", "Material 01");
       } else if (code === "666") {
-        alert("Código correcto, archivo de audio encontrado.")
-        document.getElementById("lockScreen").style.display = "none";
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen001.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-01.mp3", "Historias de miedo", "¿Cual el el apellido del terror de la selva?");
+        alert("Código correcto ✔️");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen001.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-01.mp3", "Historias de miedo", "¿Cuál es el apellido del terror de la selva?");
       } else if (code === "0001") {
-        alert("Código correcto, archivo de audio encontrado.")
-        document.getElementById("lockScreen").style.display = "none";
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen005.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-04.mp3", "La radio", "¿Cual es el nombre de la cancion?");
+        alert("Código correcto ✔️");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen005.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-04.mp3", "La radio", "¿Cuál es el nombre de la canción?");
       } else {
-        alert("Código incorrecto, intenta nuevamente.");
+        alert("Código incorrecto ❌");
       }
     }
 
@@ -178,8 +145,8 @@
       document.getElementById("image").src = imageUrl;
       document.getElementById("audioSource").src = audioUrl;
       document.getElementById("audioPlayer").load();
-      document.querySelector(".details-section h1").innerText = title;
-      document.querySelector(".details-section p").innerText = subtitle;
+      document.querySelector(".left-section h1").innerText = title;
+      document.querySelector(".left-section p").innerText = subtitle;
     }
   </script>
 </body>

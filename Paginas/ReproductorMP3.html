@@ -152,4 +152,32 @@
     </div>
   </div>
 </body>
+    <script>
+    function checkCode() {
+      const code = document.getElementById("codeInput").value;
+      if (code === "M2Z") {
+        alert("Código correcto ✔️");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-03.mp3", "Material extra", "Material 02");
+      } else if (code === "0420") {
+        alert("Código correcto ✔️");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-02.mp3", "Material extra", "Material 01");
+      } else if (code === "666") {
+        alert("Código correcto ✔️");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen001.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-01.mp3", "Historias de miedo", "¿Cuál es el apellido del terror de la selva?");
+      } else if (code === "0001") {
+        alert("Código correcto ✔️");
+        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen005.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-04.mp3", "La radio", "¿Cuál es el nombre de la canción?");
+      } else {
+        alert("Código incorrecto ❌");
+      }
+    }
+
+    function changeMedia(imageUrl, audioUrl, title, subtitle) {
+      document.getElementById("image").src = imageUrl;
+      document.getElementById("audioSource").src = audioUrl;
+      document.getElementById("audioPlayer").load();
+      document.querySelector(".left-section h1").innerText = title;
+      document.querySelector(".left-section p").innerText = subtitle;
+    }
+  </script>
 </html>

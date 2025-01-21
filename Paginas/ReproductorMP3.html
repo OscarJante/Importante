@@ -14,91 +14,122 @@
       height: 100vh;
       background-color: #d3dbd5;
     }
+
     .container {
       display: flex;
+      flex-direction: row;
       background-color: #e3e9e5;
       border-radius: 15px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       overflow: hidden;
-      width: 80%;
+      width: 90%;
       max-width: 900px;
-      height: 80%;
+      height: auto;
     }
-    .left-section {
+
+    .left-section, .right-section {
       flex: 1;
+      padding: 20px;
+    }
+
+    .left-section {
       background-color: #2c3e50;
       color: white;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 20px;
     }
+
     .left-section h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
+      font-size: 2rem;
+      margin-bottom: 10px;
       text-align: center;
     }
+
     .left-section p {
-      font-size: 1.2rem;
-      margin: 10px 0 0;
+      font-size: 1rem;
       text-align: center;
       line-height: 1.5;
     }
+
     .right-section {
-      flex: 1;
       background-color: #f6f6f6;
-      padding: 20px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
     }
+
     .right-section img {
-      position: relative;
       width: 100%;
       max-width: 400px;
       margin-bottom: 10px;
       border-radius: 15px;
-      overflow: hidden;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
+
     .audio-player {
       width: 100%;
       margin-bottom: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       border-radius: 15px;
     }
-.search-container {
-  width: 100%;
-  max-width: 300px;
-  display: flex; /* Cambia el diseño a flexbox */
-  align-items: center; /* Centra verticalmente */
-}
 
-.search-container input {
-  padding: 6px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  width: 75%; /* Ajusta el ancho del input */
-  box-sizing: border-box;
-  text-align: left;
-}
-
-.search-container button {
-  background-color: #7f9a93;
-  color: white;
-  padding: 5px;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-  width: 30%; /* Ajusta el ancho del botón */
-}
-
+    .search-container {
+      width: 100%;
+      display: flex;
+      gap: 10px; /* Espacio entre el input y el botón */
     }
+
+    .search-container input {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      flex: 3; /* Ocupa 3 partes del espacio disponible */
+      box-sizing: border-box;
+    }
+
+    .search-container button {
+      background-color: #7f9a93;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 10px;
+      flex: 1; /* Ocupa 1 parte del espacio disponible */
+    }
+
     .search-container button:hover {
       background-color: #6a7e77;
-      
+    }
+
+    /* Responsividad para pantallas pequeñas */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .left-section {
+        text-align: center;
+        padding: 10px;
+      }
+
+      .right-section img {
+        max-width: 100%;
+      }
+
+      .search-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .search-container input, .search-container button {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -106,7 +137,7 @@
   <div class="container">
     <div class="left-section">
       <h1>Reproductor de audios</h1>
-      <p>En esta seccion podras buscar audios que te den mas pistas para resolver los acertijos.</p>
+      <p>En esta sección podrás buscar audios que te den más pistas para resolver los acertijos.</p>
     </div>
     <div class="right-section">
       <img id="image" src="https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen000.jpg" alt="Rain Effect">
@@ -120,34 +151,5 @@
       </div>
     </div>
   </div>
-
-  <script>
-    function checkCode() {
-      const code = document.getElementById("codeInput").value;
-      if (code === "M2Z") {
-        alert("Código correcto ✔️");
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-03.mp3", "Material extra", "Material 02");
-      } else if (code === "0420") {
-        alert("Código correcto ✔️");
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen003.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-02.mp3", "Material extra", "Material 01");
-      } else if (code === "666") {
-        alert("Código correcto ✔️");
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen001.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-01.mp3", "Historias de miedo", "¿Cuál es el apellido del terror de la selva?");
-      } else if (code === "0001") {
-        alert("Código correcto ✔️");
-        changeMedia("https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen005.jpg", "https://oscarjante.github.io/SanValentin1.0/Audios/250118-04.mp3", "La radio", "¿Cuál es el nombre de la canción?");
-      } else {
-        alert("Código incorrecto ❌");
-      }
-    }
-
-    function changeMedia(imageUrl, audioUrl, title, subtitle) {
-      document.getElementById("image").src = imageUrl;
-      document.getElementById("audioSource").src = audioUrl;
-      document.getElementById("audioPlayer").load();
-      document.querySelector(".left-section h1").innerText = title;
-      document.querySelector(".left-section p").innerText = subtitle;
-    }
-  </script>
 </body>
 </html>

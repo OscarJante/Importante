@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temporizador de Ayuda</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #d3dbd5;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      background-color: #e3e9e5;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      width: 90%;
+      max-width: 900px;
+      height: auto;
+    }
+
+    .left-section, .right-section {
+      flex: 1;
+      padding: 20px;
+    }
+
+    .left-section {
+      background-color: #2c3e50;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .left-section h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .left-section p {
+      font-size: 1rem;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .right-section {
+      background-color: #f6f6f6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .right-section img {
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 10px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .whatsapp-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #007bff;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 50px;
+      font-size: 1rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .whatsapp-btn img {
+      width: 20px;
+      height: 20px;
+      margin-right: 10px;
+    }
+
+    .whatsapp-btn:hover {
+      background-color: #0056b3;
+    }
+
+    .search-container {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .search-container input {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      flex: 3;
+      box-sizing: border-box;
+    }
+
+    .search-container button {
+      background-color: #7f9a93;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 10px;
+      flex: 1;
+    }
+
+    .search-container button:hover {
+      background-color: #6a7e77;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        height: auto;
+      }
+
+      .left-section {
+        text-align: center;
+        padding: 10px;
+      }
+
+      .right-section img {
+        max-width: 100%;
+      }
+
+      .search-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .search-container input, .search-container button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="left-section">
+      <h1>Parte I: Cumpleaños</h1>
+      <p id="start-time">
+        Este icono son temporizadores de guía para pedir ayuda. Cada ayuda tiene un costo. Para conocer la dinámica, es obligatorio pedir ayuda esta vez.
+      </p>
+      <p id="end-time"></p>
+    </div>
+    <div class="right-section">
+      <img src="https://oscarjante.github.io/SanValentin1.0/Imagenes/Imagen004.jpg" alt="Imagen de guía">
+      <a href="https://wa.me/524775643354?text=Voy%20en%20la%20etapa%20numero%20uno%0Apero%20necesito%20una%20pista%0Aestoy%20dispuesta%20a%20pagar%0Aconforme%20a%20la%20siguiente%20lista%3A%0AUn%20beso%20y%20llevarte%20al%20metro%20con%20Ru" 
+         class="whatsapp-btn" target="_blank">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"> Ayuda Obligatoria
+      </a>
+
+      <!-- Contenedor de búsqueda -->
+      <div class="search-container">
+        <input type="text" id="code-input" placeholder="Ingresa tu código aquí">
+        <button onclick="searchCode()">Buscar</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const now = new Date();
+
+    function formatAMPM(date) {
+      let hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const strMinutes = minutes < 10 ? '0' + minutes : minutes;
+      return `${hours}:${strMinutes} ${ampm}`;
+    }
+
+    const startTime = formatAMPM(now);
+    const endTime = formatAMPM(new Date(now.getTime() + 8 * 60 * 1000));
+
+    document.getElementById("start-time").textContent += `\nHora de inicio: ${startTime}`;
+    document.getElementById("end-time").textContent = `Hora de finalización: ${endTime}`;
+
+    function searchCode() {
+      const code = document.getElementById('code-input').value;
+      if (code) {
+        alert(`Buscando el código: ${code}`);
+      } else {
+        alert('Por favor, ingresa un código.');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -158,13 +158,15 @@
   <div class="container">
     <div class="left-section">
       <h1>Parte I: Cumpleaños</h1>
-      <p id="start-time">
+      <p id="texto-inicial">
         Este icono son temporizadores de guía para pedir ayuda. Cada ayuda tiene un costo. Para conocer la dinámica, es obligatorio pedir ayuda esta vez.
+      </p>
+      <p id="start-time">
       </p>
       <p id="end-time"></p>
     </div>
     <div class="right-section">
-      <img src="https://oscarjante.github.io/FechaImportante/Imagenes/Imagen004.jpg" alt="Imagen de guía">
+      <img src="https://oscarjante.github.io/Importante/Imagenes/Imagen006.jpg" alt="Temporizador">
       <a href="https://wa.me/524775643354?text=Voy%20en%20la%20etapa%20numero%20uno%0Apero%20necesito%20una%20pista%0Aestoy%20dispuesta%20a%20pagar%0Aconforme%20a%20la%20siguiente%20lista%3A%0AUn%20beso%20y%20llevarte%20al%20metro%20con%20Ru" 
          class="whatsapp-btn" target="_blank">
         <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"> Ayuda Obligatoria
@@ -193,7 +195,7 @@
     const startTime = formatAMPM(now);
     const endTime = formatAMPM(new Date(now.getTime() + 8 * 60 * 1000));
 
-    document.getElementById("start-time").textContent += `\nHora de inicio: ${startTime}`;
+    document.getElementById("start-time").textContent += `Hora de inicio: ${startTime}`;
     document.getElementById("end-time").textContent = `Hora de finalización: ${endTime}`;
 
     function searchCode() {

@@ -162,8 +162,6 @@
         Este icono son temporizadores de guía para pedir ayuda. Cada ayuda tiene un costo. Para conocer la dinámica, es obligatorio pedir ayuda esta vez.
       </p>
       <p id="start-time">
-      </p>
-      <p id="end-time"></p>
     </div>
     <div class="right-section">
       <img src="https://oscarjante.github.io/Importante/Imagenes/Imagen006.jpg" alt="Temporizador">
@@ -195,8 +193,7 @@
     const startTime = formatAMPM(now);
     const endTime = formatAMPM(new Date(now.getTime() + 8 * 60 * 1000));
 
-    document.getElementById("start-time").textContent += `Hora de inicio: ${startTime}`;
-    document.getElementById("end-time").textContent = `Hora de finalización: ${endTime}`;
+    document.getElementById("start-time").innerHTML  += `Hora de inicio: ${startTime} <br> Hora de finalización: ${endTime}`;
 
     function searchCode() {
       const code = document.getElementById('code-input').value;

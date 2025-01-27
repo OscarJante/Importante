@@ -197,7 +197,7 @@ function changeAll(minutos, titulo, subtitulo, textowa, url) {
   const startTime = formatAMPM(now);
   const endTime = formatAMPM(new Date(now.getTime() + minutos * 60 * 1000));
   
-  document.getElementById("start-time").innerHTML += `Hora de inicio: ${startTime} <br> Hora de pedir ayuda: ${endTime}`;
+  document.getElementById("start-time").innerHTML = `Hora de inicio: ${startTime} <br> Hora de pedir ayuda: ${endTime}`;
   document.querySelector(".left-section h1").innerText = titulo;
   document.querySelector("#texto-inicial").innerText = subtitulo;
   document.querySelector(".whatsapp-btn").innerText = textowa;
@@ -213,7 +213,7 @@ function changeAll(minutos, titulo, subtitulo, textowa, url) {
       } 
       else if (code === "1992") {
         alert(`✔️ ${code} es un codigo correcto`);
-        changeAll(0, "Parte II: Recorrido", "Corre corre corre, y espero que seas muy atenta a tu entorno, en caso contrario deberias pedir ayuda", "Esta burra necesita ayuda 🙈", "https://wa.me/524775643354?text=Voy%20en%20la%20parte%20II%20y%20requiero%20una%20pista%2C%20la%20verdad%20es%20que%20soy%20medio%20distraída%20y%20boba%2C%20si%20me%20ayudas%20te%20llevo%20a%20ver%20una%20película%20de%20romance%20y%20comedia%20que%20desde%20ahora%20son%20mis%20favoritas%2C%20Ahhh%20y%20pago%20el%20baguette%2C%20palomita%20y%20frappe")
+        changeAll(30, "Parte II: Recorrido", "Corre corre corre, y espero que seas muy atenta a tu entorno, en caso contrario deberias pedir ayuda y cada vez es mas caro el precio", "Esta burra necesita ayuda 🙈", "https://wa.me/524775643354?text=Voy%20en%20la%20parte%20II%20y%20requiero%20una%20pista%2C%20la%20verdad%20es%20que%20soy%20medio%20distraída%20y%20boba%2C%20si%20me%20ayudas%20te%20llevo%20a%20ver%20una%20película%20de%20romance%20y%20comedia%20que%20desde%20ahora%20son%20mis%20favoritas%2C%20Ahhh%20y%20pago%20el%20baguette%2C%20palomita%20y%20frappe")
       } 
       else {
         alert('Por favor, ingresa un código.');

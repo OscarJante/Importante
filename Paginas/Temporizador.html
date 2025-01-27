@@ -159,9 +159,9 @@
 <body>
   <div class="container">
     <div class="left-section">
-      <h1>Parte I: Cumpleaños</h1>
+      <h1>Temporizador</h1>
       <p id="texto-inicial">
-        Este icono son temporizadores de guía para pedir ayuda. Cada ayuda tiene un costo. Para conocer la dinámica, es obligatorio pedir ayuda esta vez.
+        Este icono son temporizadores guía para saber cuando pedir ayuda. Cada ayuda tiene un costo.
       </p>
       <p id="start-time">
     </div>
@@ -192,15 +192,13 @@
       return `${hours}:${strMinutes} ${ampm}`;
     }
 
-    const startTime = formatAMPM(now);
-    const endTime = formatAMPM(new Date(now.getTime() + 8 * 60 * 1000));
-
-    document.getElementById("start-time").innerHTML  += `Hora de inicio: ${startTime} <br> Hora de finalización: ${endTime}`;
-
     function searchCode() {
       const code = document.getElementById('code-input').value;
       if (code) {
         alert(`Buscando el código: ${code}`);
+        const startTime = formatAMPM(now);
+    	const endTime = formatAMPM(new Date(now.getTime() + 8 * 60 * 1000))
+        document.getElementById("start-time").innerHTML  += `Hora de inicio: ${startTime} <br> Hora de finalización: 			${endTime}`;
       } else {
         alert('Por favor, ingresa un código.');
       }

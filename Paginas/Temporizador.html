@@ -167,7 +167,7 @@
       </p>
     </div>
     <div class="right-section">
-      <img src="https://oscarjante.github.io/Importante/Imagenes/Imagen006.jpg" alt="Temporizador">
+      <img id="image" src="https://oscarjante.github.io/Importante/Imagenes/Imagen004.jpg" alt="Imagen">
       <a
          class="whatsapp-btn" target="_blank">
          Ayuda no disponible sin codigo
@@ -193,7 +193,7 @@
       return `${hours}:${strMinutes} ${ampm}`;
     }
     
-function changeAll(minutos, titulo, subtitulo, textowa, url) {
+function changeAll(minutos, titulo, subtitulo, textowa, url, imageUrl) {
   const startTime = formatAMPM(now);
   const endTime = formatAMPM(new Date(now.getTime() + minutos * 60 * 1000));
   
@@ -203,21 +203,23 @@ function changeAll(minutos, titulo, subtitulo, textowa, url) {
   document.querySelector(".whatsapp-btn").innerText = textowa;
   document.querySelector(".whatsapp-btn").style.backgroundColor = "#007bff";
   document.querySelector(".whatsapp-btn").setAttribute("href", url);
+  document.getElementById("image").src = imageUrl;
+  
 }
     
     function searchCode() {
       const code = document.getElementById('code-input').value;
       if (code === "0420") {
         alert(`✔️ ${code} es un codigo correcto`);
-        changeAll(0, "Parte I: Cumpleaños", "Como esta es la primera vez que usas el temporizador es obligatorio que uses el botón de pedir ayuda para que conozcas la dinámica, abajo aparece cuando debes pedir ayuda", "Pide ayuda con este botón ❤️", "https://wa.me/524775643354?text=Voy%20en%20la%20parte%20I%20y%20requiero%20una%20pista%2C%20como%20pago%20te%20invito%20a%20dar%20un%20paseo%20con%20Rukichis%20por%20el%20metropolitano%20uno%20de%20estos%20días%20y%20luego%20te%20llevo%20a%20cenar")
+        changeAll(0, "Parte I: Cumpleaños", "Como esta es la primera vez que usas el temporizador es obligatorio que uses el botón de pedir ayuda para que conozcas la dinámica, abajo aparece cuando debes pedir ayuda", "Pide ayuda con este botón ❤️", "https://wa.me/524775643354?text=Voy%20en%20la%20parte%20I%20y%20requiero%20una%20pista%2C%20como%20pago%20te%20invito%20a%20dar%20un%20paseo%20con%20Rukichis%20por%20el%20metropolitano%20uno%20de%20estos%20días%20y%20luego%20te%20llevo%20a%20cenar", "https://oscarjante.github.io/Importante/Imagenes/Imagen004.jpg")
       } 
       else if (code === "1992") {
         alert(`✔️ ${code} es un codigo correcto`);
-        changeAll(30, "Parte II: Recorrido", "Corre corre corre, ¡Arre burrita! Espero que seas muy atenta a tu entorno y que no seas floja para caminar (sugiero que siempre revises cual es el costo de pedir ayuda)", "Esta burra necesita ayuda 🙈", "https://wa.me/524775643354?text=Voy%20en%20la%20parte%20II%20y%20requiero%20una%20pista%2C%20la%20verdad%20es%20que%20soy%20medio%20distraída%20y%20boba%2C%20si%20me%20ayudas%20te%20llevo%20a%20ver%20una%20película%20de%20romance%20y%20comedia%20que%20desde%20ahora%20son%20mis%20favoritas%2C%20Ahhh%20y%20pago%20el%20baguette%2C%20palomita%20y%20frappe")
+        changeAll(30, "Parte II: Recorrido", "Corre corre corre, ¡Arre burrita! Espero que seas muy atenta a tu entorno y que no seas floja para caminar (sugiero que siempre revises cual es el costo de pedir ayuda)", "Esta burra necesita ayuda 🙈", "https://wa.me/524775643354?text=Voy%20en%20la%20parte%20II%20y%20requiero%20una%20pista%2C%20la%20verdad%20es%20que%20soy%20medio%20distraída%20y%20boba%2C%20si%20me%20ayudas%20te%20llevo%20a%20ver%20una%20película%20de%20romance%20y%20comedia%20que%20desde%20ahora%20son%20mis%20favoritas%2C%20Ahhh%20y%20pago%20el%20baguette%2C%20palomita%20y%20frappe", "https://oscarjante.github.io/Importante/Imagenes/Imagen004.jpg")
       } 
       else if (code === "1998") {
         alert(`✔️ ${code} es un codigo correcto`);
-        changeAll(10, "Parte III: Haciendo amigos", "He de confesar que para cuando había pensado este reto cierto evento aun no había sucedido, pero espero que sirva para mejorar algo o al menos para molestarte, por cierto... ¡¡Toma cabeza hueca!!", "Esta bobalicona peleonera necesita ayuda 😇", "https://wa.me/524775643354?text=Voy%20en%20la%20parte%20II%20y%20requiero%20una%20pista%2C%20la%20verdad%20es%20que%20soy%20medio%20distraída%20y%20boba%2C%20si%20me%20ayudas%20te%20llevo%20a%20ver%20una%20película%20de%20romance%20y%20comedia%20que%20desde%20ahora%20son%20mis%20favoritas%2C%20Ahhh%20y%20pago%20el%20baguette%2C%20palomita%20y%20frappe")
+        changeAll(10, "Parte III: Haciendo amigos", "He de confesar que para cuando había pensado este reto cierto evento aun no había sucedido, pero espero que sirva para mejorar algo o al menos para molestarte, por cierto... ¡¡Toma cabeza hueca!!", "Esta bobalicona peleonera necesita ayuda 😇", "https://wa.me/524775643354?text=Voy%20en%20la%20parte%20II%20y%20requiero%20una%20pista%2C%20la%20verdad%20es%20que%20soy%20medio%20distraída%20y%20boba%2C%20si%20me%20ayudas%20te%20llevo%20a%20ver%20una%20película%20de%20romance%20y%20comedia%20que%20desde%20ahora%20son%20mis%20favoritas%2C%20Ahhh%20y%20pago%20el%20baguette%2C%20palomita%20y%20frappe", "https://oscarjante.github.io/Importante/Imagenes/GIF0001.gif")
       } 
       else {
         alert(' ❌ Este no es un codigo correcto.');

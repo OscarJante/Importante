@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escáner de QR</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js"></script>
+</head>
+<body>
+    <h1>Escanear Código QR</h1>
+    <video id="video" width="300" height="300" autoplay></video>
+    <canvas id="canvas" hidden></canvas>
+    <p id="resultado">Esperando escaneo...</p>
+    
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const contexto = canvas.getContext('2d');
+        const resultado = document.getElementById('resultado');
+
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(stream => { video.srcObject = stream; })
+            .catch(err => console.error("Error accediendo a la cámara", err));
+
+        function escanearQR() {
+            if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                contexto.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                const imagenData = contexto.getImageData(0, 0, canvas.width, canvas.height);
+                const codigo = jsQR(imagenData.data, imagenData.width, imagenData.height);
+                
+                if (codigo) {
+                    resultado.textContent = "Código detectado: " + codigo.data;
+                }
+            }
+            requestAnimationFrame(escanearQR);
+        }
+
+        escanearQR();
+    </script>
+</body>
+</html>

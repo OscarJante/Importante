@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+</head>
+<body>
+
+<button onclick="startScanner()">Escanear QR</button>
+<div id="qr-reader" style="width:300px"></div>
+
+<script>
+function startScanner() {
+  const qrReader = new Html5Qrcode("qr-reader");
+  qrReader.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    qrCodeMessage => {
+      alert("Código QR detectado: " + qrCodeMessage);
+      qrReader.stop(); // Detener después de leer uno
+    },
+    errorMessage => {
+      // errores silenciosos
+    }
+  );
+}
+</script>
+
+</body>
+</html>

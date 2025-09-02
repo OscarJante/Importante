@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "municipio": "León",
+    "estado": "Guanajuato",
+    "direccion": "Blvd. Adolfo López Mateos 2002, Col. Peñitas, C.P. 37180",
+    "departamento": "Ventas",
+    "m2_alfombra": "150 m2",
+    "horarios": "Lunes a viernes, 8 horas",
+    "operarios": "2",
+    "lat": 21.1222,
+    "lng": -101.6800,
+    "display": "Blvd. Adolfo López Mateos 2002, Col. Peñitas, León, Gto."
+  },
+  {
+    "id": 2,
+    "municipio": "CDMX (Polanco)",
+    "estado": "CDMX",
+    "direccion": "Blvd. Manuel Ávila Camacho 175, Col. Polanco, C.P. 11510",
+    "departamento": "Siniestros",
+    "m2_alfombra": "468 m2",
+    "horarios": "Lunes a viernes, 8 horas",
+    "operarios": "1",
+    "lat": 19.4326,
+    "lng": -99.1955,
+    "display": "Blvd. Manuel Ávila Camacho 175, Polanco, CDMX"
+  },
+  {
+    "id": 3,
+    "municipio": "Monterrey (Obispado)",
+    "estado": "Nuevo León",
+    "direccion": "Constitución 2170 Pte., Col. Obispado, C.P. 64060",
+    "departamento": "Ventas / Siniestros",
+    "m2_alfombra": "90 m2",
+    "horarios": "Lunes a viernes, 8 horas",
+    "operarios": "1",
+    "lat": 25.6866,
+    "lng": -100.3161,
+    "display": "Constitución 2170 Pte., Obispado, Monterrey, N.L."
+  }
+]

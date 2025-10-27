@@ -66,6 +66,15 @@
       font-weight: bold;
       color: #333;
     }
+	.nombre-propio {
+      display: inline-block;
+      background: #eee;
+      padding: 5px 12px; /* Aumentado */
+      border-radius: 6px;
+      font-size: 1.1em; /* Aumentado */
+      font-weight: bold;
+      color: #333;
+	  text-transform: capitalize;
     .label {
       font-weight: bold;
       color: #5e6c84;
@@ -121,7 +130,7 @@
         // 4. El estado ahora es el primer dato después de la foto.
         info.innerHTML = `
           <h2>${data.name || "Tarea sin nombre"}</h2>
-          <p><span class="label">Estado:</span> <span class="status">${data.status || "—"}</span></p>
+          <p><span class="nombre-propio">${data.status || "—"}</span></p>
 		  
           <!-- Si existe foto_url, muestra la imagen. Si no, no muestra nada. -->
           ${data.foto_url ? `<img src="${data.foto_url}" alt="Fotografía de la persona">` : ''}

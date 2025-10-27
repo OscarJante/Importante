@@ -67,10 +67,11 @@
       color: #333;
     }
 	.nombre-propio {
-      background: #eee;
+      display: inline-block;
+	  background: #eee;
       padding: 5px 12px; /* Aumentado */
       border-radius: 6px;
-      font-size: 1.1em; /* Aumentado */
+      font-size: 1.4em; /* Aumentado */
       font-weight: bold;
       color: #333;
 	  text-transform: capitalize;
@@ -147,8 +148,8 @@
           <p><span class="label">Empresa:</span> ${data.empresa || "—"}</p>
           <p><span class="label">Tipo de visita:</span> ${data.tipo_visita || "—"}</p>
           <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0;">
-          <p><span class="label">Fecha inicio:</span> ${data.start_date ? new Date(data.start_date).toLocaleString() : "—"}</p>
-          <p><span class="label">Fecha límite:</span> ${data.due_date ? new Date(data.due_date).toLocaleString() : "—"}</p>
+          <p><span class="label">Fecha inicio:</span> ${data.start_date ? new Date(data.start_date).toLocaleDateString() : "—"}</p>
+          <p><span class="label">Fecha límite:</span> ${data.due_date ? new Date(data.due_date).toLocaleDateString() : "—"}</p>
         `;
       } catch (err) {
         console.error(err);
@@ -210,4 +211,5 @@
   </script>
 </body>
 </html>
+
 

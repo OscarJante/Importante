@@ -129,7 +129,7 @@
 
       try {
         // Asegúrate que el nombre de la función ('getTask') coincida con el de tu archivo en Netlify
-        const res = await fetch('https://magnificent-moxie-75e539.netlify.app/.netlify/functions/ObtenerTarea003?task_id=${taskId}&custom_task_ids=true');
+        const res = await fetch(`https://magnificent-moxie-75e539.netlify.app/.netlify/functions/ObtenerTarea003?task_id=${taskId}&custom_task_ids=true`);
         const data = await res.json();
 
         if (data.error) {
@@ -212,6 +212,7 @@
   </script>
 </body>
 </html>
+
 
 
 

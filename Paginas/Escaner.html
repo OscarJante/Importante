@@ -67,7 +67,6 @@
       color: #333;
     }
 	.nombre-propio {
-      display: inline-block;
       background: #eee;
       padding: 5px 12px; /* Aumentado */
       border-radius: 6px;
@@ -81,7 +80,7 @@
 		background-color: #d4edda; /* Un verde pastel */
 		color: #155724; /* Un verde oscuro para el texto */
 	}
-	.status-red {
+	.-red {
 		background-color: #f8d7da; /* Un rojo pastel */
 		color: #721c24; /* Un rojo oscuro para el texto */
 	}
@@ -148,8 +147,8 @@
           <p><span class="label">Empresa:</span> ${data.empresa || "—"}</p>
           <p><span class="label">Tipo de visita:</span> ${data.tipo_visita || "—"}</p>
           <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0;">
-          <p><span class="label">Fecha inicio:</span> ${data.start_date ? new Date(parseInt(data.start_date)).toLocaleString() : "—"}</p>
-          <p><span class="label">Fecha límite:</span> ${data.due_date ? new Date(parseInt(data.due_date)).toLocaleString() : "—"}</p>
+          <p><span class="label">Fecha inicio:</span> ${data.start_date ? new Date(data.start_date).toLocaleString() : "—"}</p>
+          <p><span class="label">Fecha límite:</span> ${data.due_date ? new Date(data.due_date).toLocaleString() : "—"}</p>
         `;
       } catch (err) {
         console.error(err);
@@ -211,3 +210,4 @@
   </script>
 </body>
 </html>
+

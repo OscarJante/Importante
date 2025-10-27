@@ -75,6 +75,16 @@
       font-weight: bold;
       color: #333;
 	  text-transform: capitalize;
+	  text-align: center;
+	}
+	.status-green {
+		background-color: #d4edda; /* Un verde pastel */
+		color: #155724; /* Un verde oscuro para el texto */
+	}
+	.status-red {
+		background-color: #f8d7da; /* Un rojo pastel */
+		color: #721c24; /* Un rojo oscuro para el texto */
+	}
     .label {
       font-weight: bold;
       color: #5e6c84;
@@ -130,11 +140,10 @@
         // 4. El estado ahora es el primer dato después de la foto.
         info.innerHTML = `
           <h2>${data.name || "Tarea sin nombre"}</h2>
-          <p><span class="nombre-propio">${data.status || "—"}</span></p>
+          <p><span class="nombre-propio ${obtenerClaseDeStatus(data.status)}">${data.status || "—"}</span></p>
 		  
           <!-- Si existe foto_url, muestra la imagen. Si no, no muestra nada. -->
           ${data.foto_url ? `<img src="${data.foto_url}" alt="Fotografía de la persona">` : ''}
-          
           
           <p><span class="label">Empresa:</span> ${data.empresa || "—"}</p>
           <p><span class="label">Tipo de visita:</span> ${data.tipo_visita || "—"}</p>
@@ -186,6 +195,19 @@
       html5QrCode.start({ facingMode: "environment" }, config, onScanSuccess)
           .catch(err => console.error("No se pudo reiniciar el lector QR", err));
     });
+	
+	function obtenerClaseDeStatus(status) {
+	const statusLimpio = (status || '').toLowerCase(); // Normaliza el status a minúsculas
+
+	switch (statusLimpio) {
+		case 'acceso vigente':
+    return 'status-green'; // Elige todos los valores que deben ser verdes
+		case 'acceso restringido':
+    return 'status-red'; // Elige todos los que deben ser rojos
+    default:
+    return ''; // Si no coincide, no añade clase de color
+  }
+}
   </script>
 </body>
 </html>

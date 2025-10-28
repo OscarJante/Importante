@@ -241,7 +241,10 @@
     case 'acceso restringido':
       clase = 'status-red';
       mensaje = 'Acceso no permitido';
-      break;
+    case 'acceso vip':
+      clase = 'status-green';
+      mensaje = 'Acceso permitido'
+    break;
     // Default ya está manejado al inicio
   }
 
@@ -250,16 +253,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-

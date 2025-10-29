@@ -83,7 +83,7 @@
 		background-color: #d4edda; /* Un verde pastel */
 		color: #155724; /* Un verde oscuro para el texto */
 	}
-	.-red {
+	.status-red {
 		background-color: #f8d7da; /* Un rojo pastel */
 		color: #721c24; /* Un rojo oscuro para el texto */
 	}
@@ -218,7 +218,7 @@
       if (isWeekend) {
         // Si es fin de semana, bloquear acceso incluso si es vigente
         clase = 'status-red';
-        mensaje = 'Acceso no permitido';
+        mensaje = 'Acceso no permitido en fines de semana';
       } else {
         // Definir endMinutes basado en si es viernes o no
         let endMinutes;
@@ -234,7 +234,7 @@
           mensaje = 'Acceso Permitido';
         } else {
           clase = 'status-red';
-          mensaje = 'Acceso no permitido';
+          mensaje = 'Acceso no permitido fuera de horario laboral';
         }
       }
       break;
@@ -243,7 +243,7 @@
       mensaje = 'Acceso no permitido';
     case 'acceso vip':
       clase = 'status-green';
-      mensaje = 'Acceso permitido'
+      mensaje = 'Acceso permitido usuario VIP'
     break;
     // Default ya está manejado al inicio
   }
@@ -253,3 +253,4 @@
 </script>
 </body>
 </html>
+

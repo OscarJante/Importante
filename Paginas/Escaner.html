@@ -152,7 +152,7 @@
           <!-- Si existe foto_url, muestra la imagen. Si no, no muestra nada. -->
           ${data.foto_url ? `<img src="${data.foto_url}" alt="Fotografía de la persona">` : ''}
           
-          <p><span class="label">Empresa:</span> ${sedeSeleccionada || "—"}</p>
+          <p><span class="label">Empresa:</span> ${data.empresa || "—"}</p>
           <p><span class="label">Tipo de visita:</span> ${data.tipo_visita || "—"}</p>
           <hr style="border: none; border-top: 1px solid #eee; margin: 15px 0;">
           <p><span class="label">Fecha inicio:</span> ${data.start_date ? new Date(data.start_date).toLocaleDateString() : "—"}</p>
@@ -259,6 +259,7 @@
 </script>
 </body>
 </html>
+
 
 
 

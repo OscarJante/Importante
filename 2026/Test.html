@@ -97,109 +97,125 @@
 </div>
 
 <script>
-const tube = document.getElementById("tube");
-const bubble = document.getElementById("bubble");
-const target = document.getElementById("target");
-const progressBar = document.getElementById("progress");
-const winMsg = document.getElementById("winMsg");
+    const tube = document.getElementById("tube");
+    const bubble = document.getElementById("bubble");
+    const target = document.getElementById("target");
+    const progressBar = document.getElementById("progress");
+    const winMsg = document.getElementById("winMsg");
+    const startBtn = document.getElementById("startBtn");
 
-const tubeHeight = 320;
-const bubbleSize = 36;
-const targetSize = 40;
+    const tubeHeight = tube.clientHeight; // Usar clientHeight para ser más preciso
+    const bubbleSize = bubble.offsetHeight;
+    const targetSize = target.offsetHeight;
 
-let progress = 0;
-let holding = false;
-let interval = null;
+    let progress = 0;
+    let holding = false; // Estado: ¿estamos manteniendo la posición?
+    let interval = null;
+    let gameActive = false; // Para evitar que se mueva antes de hacer clic
 
-// margen humano razonable (px)
-const tolerance = 12;
+    // Margen humano razonable (px)
+    const tolerance = 12;
 
-// objetivo aleatorio
-function placeTarget() {
-    const min = 20;
-    const max = tubeHeight - targetSize - 20;
-    const y = Math.random() * (max - min) + min;
-    target.style.top = y + "px";
-}
-placeTarget();
-
-// mover burbuja según giroscopio
-function handleOrientation(event) {
-    // gamma = inclinación frontal (-90 a 90)
-    let beta = event.beta;
-    beta = Math.max(-45, Math.min(45, beta));
-
-    const normalized = (beta + 45) / 90;
-    const y = normalized * (tubeHeight - bubbleSize);
-
-    bubble.style.top = y + "px";
-
-    checkAlignment(y);
-}
-
-// comprobar alineación
-function checkAlignment(bubbleY) {
-    const targetY = target.offsetTop + targetSize / 2;
-    const bubbleCenter = bubbleY + bubbleSize / 2;
-
-    const diff = Math.abs(targetY - bubbleCenter);
-
-    if (diff <= tolerance) {
-        if (!holding) startProgress();
-    } else {
-        resetProgress();
+    // Colocar objetivo en una posición aleatoria
+    function placeTarget() {
+        const min = 20;
+        const max = tubeHeight - targetSize - 20;
+        const y = Math.random() * (max - min) + min;
+        target.style.top = y + "px";
     }
-}
+    placeTarget();
 
-// progreso de 5 segundos
-function startProgress() {
-    clearInterval(interval);
-    holding = true;
+    // Mover burbuja según la inclinación del dispositivo
+    function handleOrientation(event) {
+        if (!gameActive) return;
 
-    interval = setInterval(() => {
-        progress += 20;
-        progressBar.style.width = progress + "%";
+        // beta = inclinación frontal (-90 a 90)
+        let beta = event.beta;
+        
+        // Limitar el ángulo para que no sea demasiado sensible
+        beta = Math.max(-45, Math.min(45, beta));
 
-        if (progress >= 100) {
-            win();
-        }
-    }, 1000);
-}
+        const normalized = (beta + 45) / 90; // Normaliza el valor de 0.0 a 1.0
+        const y = normalized * (tubeHeight - bubbleSize);
 
-function resetProgress() {
-    if (!holding && progress === 0) return;
+        bubble.style.top = y + "px";
 
-    holding = false;
-    clearInterval(interval);
+        checkAlignment(y);
+    }
 
-    interval = setInterval(() => {
-        progress -= 20;
-        if (progress <= 0) {
-            progress = 0;
-            clearInterval(interval);
-        }
-        progressBar.style.width = progress + "%";
-    }, 1000);
-}
+    // Comprobar si la burbuja está alineada con el objetivo
+    function checkAlignment(bubbleY) {
+        const targetCenter = target.offsetTop + (targetSize / 2);
+        const bubbleCenter = bubbleY + (bubbleSize / 2);
 
-function win() {
-    clearInterval(interval);
-    winMsg.style.display = "block";
-    window.removeEventListener("deviceorientation", handleOrientation);
-}
+        const diff = Math.abs(targetCenter - bubbleCenter);
 
-// botón (iOS)
-document.getElementById("startBtn").addEventListener("click", () => {
-    if (typeof DeviceOrientationEvent.requestPermission === "function") {
-        DeviceOrientationEvent.requestPermission().then(permission => {
-            if (permission === "granted") {
-                window.addEventListener("deviceorientation", handleOrientation);
+        if (diff <= tolerance) {
+            // ESTAMOS DENTRO del objetivo
+            if (!holding) { // Si no estábamos "manteniendo", empezamos ahora.
+                startProgress();
             }
-        });
-    } else {
-        window.addEventListener("deviceorientation", handleOrientation);
+        } else {
+            // ESTAMOS FUERA del objetivo
+            if (holding) { // Si antes estábamos "manteniendo", ahora dejamos de hacerlo.
+                stopProgress();
+            }
+        }
     }
-});
+
+    // Iniciar el contador de progreso
+    function startProgress() {
+        holding = true;
+        // Limpiamos cualquier intervalo previo por seguridad
+        clearInterval(interval);
+        
+        interval = setInterval(() => {
+            progress += 20; // Aumenta un 20% cada segundo
+            progressBar.style.width = progress + "%";
+
+            if (progress >= 100) {
+                win();
+            }
+        }, 1000);
+    }
+
+    // Detener el progreso y reiniciarlo
+    function stopProgress() {
+        holding = false;
+        clearInterval(interval);
+        progress = 0; // El castigo por fallar es un reinicio instantáneo
+        progressBar.style.width = "0%";
+    }
+
+    // Función a llamar cuando se gana
+    function win() {
+        clearInterval(interval);
+        gameActive = false;
+        winMsg.style.display = "block";
+        startBtn.style.display = "none"; // Ocultar el botón al ganar
+        window.removeEventListener("deviceorientation", handleOrientation);
+    }
+
+    // Manejador del botón para solicitar permisos en iOS y activar el juego
+    startBtn.addEventListener("click", () => {
+        gameActive = true;
+        startBtn.textContent = "Giroscopio Activado";
+        startBtn.disabled = true;
+
+        // Necesario para iOS 13+
+        if (typeof DeviceOrientationEvent.requestPermission === "function") {
+            DeviceOrientationEvent.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    window.addEventListener("deviceorientation", handleOrientation);
+                } else {
+                    alert("Permiso denegado. El juego no puede funcionar sin el giroscopio.");
+                }
+            });
+        } else {
+            // Para dispositivos Android y otros que no necesitan permiso explícito
+            window.addEventListener("deviceorientation", handleOrientation);
+        }
+    });
 </script>
 
 </body>

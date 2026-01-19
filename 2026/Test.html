@@ -108,25 +108,43 @@
     const bubbleSize = bubble.offsetHeight;
     const targetSize = target.offsetHeight;
 
-    // --- NUEVAS VARIABLES PARA EL BUCLE DE JUEGO ---
-    let gameLoopId = null; // ID para poder detener el bucle
-    let lastTimestamp = 0; // Para calcular el tiempo entre fotogramas (deltaTime)
-    const PROGRESS_RATE = 20; // Puntos de progreso por segundo (100% en 5 segundos)
+    // --- VARIABLES DE BUCLE Y PROGRESO ---
+    let gameLoopId = null;
+    let lastTimestamp = 0;
+    const PROGRESS_RATE = 20;
 
-    // --- VARIABLES DE ESTADO ---
+    // --- VARIABLES DE ESTADO DEL JUEGO ---
     let progress = 0;
-    let holding = false; // Estado: ¿estamos manteniendo la posición?
+    let holding = false;
     let gameActive = false;
-
     const tolerance = 12;
 
-    function placeTarget() {
+    // --- (NUEVO) ESTADO Y CONTROL DEL OBJETIVO MÓVIL ---
+    let targetY = 0; // Posición Y actual del objetivo
+    let destinationY = 0; // Posición Y a la que se dirige el objetivo
+    const TARGET_SPEED_FACTOR = 2; // Factor de suavizado. Más alto = más rápido.
+    let changeTargetInterval = null; // ID del temporizador que cambia el destino
+
+    // Esta función ahora solo establece la POSICIÓN INICIAL
+    function placeInitialTarget() {
         const min = 20;
         const max = tubeHeight - targetSize - 20;
-        const y = Math.random() * (max - min) + min;
-        target.style.top = y + "px";
+        const initialY = Math.random() * (max - min) + min;
+        
+        targetY = initialY; // La posición actual y el destino son los mismos al inicio
+        destinationY = initialY;
+        
+        target.style.top = targetY + "px"; // Aplica la posición inicial al elemento
     }
-    placeTarget();
+
+    // (NUEVO) Esta función elige un NUEVO DESTINO para el objetivo
+    function setNewTargetDestination() {
+        const min = 20;
+        const max = tubeHeight - targetSize - 20;
+        destinationY = Math.random() * (max - min) + min;
+    }
+
+    placeInitialTarget(); // Coloca el objetivo en su sitio al cargar la página
 
     function handleOrientation(event) {
         if (!gameActive) return;
@@ -138,60 +156,61 @@
         const y = normalized * (tubeHeight - bubbleSize);
         bubble.style.top = y + "px";
 
+        // (MODIFICADO) Pasamos la posición Y del objetivo a la función de comprobación
         checkAlignment(y);
     }
     
-    // ESTA FUNCIÓN AHORA SOLO CAMBIA EL ESTADO 'holding'
+    // (MODIFICADO) La comprobación usa ahora la variable 'targetY' en lugar de leer el DOM
     function checkAlignment(bubbleY) {
-        const targetCenter = target.offsetTop + (targetSize / 2);
+        const targetCenter = targetY + (targetSize / 2); // Usa la variable en tiempo real
         const bubbleCenter = bubbleY + (bubbleSize / 2);
         const diff = Math.abs(targetCenter - bubbleCenter);
 
-        // Cambiamos el estado 'holding' según la posición.
-        // El gameLoop se encargará del resto.
         holding = (diff <= tolerance);
     }
 
-    // --- EL NUEVO CORAZÓN DEL JUEGO ---
     function gameLoop(currentTimestamp) {
-        // Inicializa el timestamp en el primer fotograma
         if (lastTimestamp === 0) {
             lastTimestamp = currentTimestamp;
         }
-
-        // Calcula el tiempo pasado en segundos
         const deltaTime = (currentTimestamp - lastTimestamp) / 1000;
         lastTimestamp = currentTimestamp;
 
-        // Calcula cuánto debe cambiar el progreso en este fotograma
-        const progressChange = PROGRESS_RATE * deltaTime;
+        // --- (NUEVO) MOVIMIENTO DEL OBJETIVO ---
+        // Calcula la distancia que le falta al objetivo para llegar a su destino
+        const distanceToDestination = destinationY - targetY;
+        
+        // Si no está ya en su destino, lo mueve un poco
+        // Esta es una fórmula de interpolación lineal (lerp) para un movimiento suave
+        if (Math.abs(distanceToDestination) > 0.5) { // Un umbral para evitar micro-movimientos
+            targetY += distanceToDestination * TARGET_SPEED_FACTOR * deltaTime;
+            target.style.top = targetY + "px"; // Actualiza el elemento visual
+        }
 
-        // Aumenta o disminuye el progreso según el estado 'holding'
+        // --- GESTIÓN DEL PROGRESO (sin cambios) ---
+        const progressChange = PROGRESS_RATE * deltaTime;
         if (holding) {
             progress += progressChange;
         } else {
             progress -= progressChange;
         }
-
-        // Asegura que el progreso se mantenga entre 0 y 100
         progress = Math.max(0, Math.min(100, progress));
-
-        // Actualiza la barra de progreso en la UI
         progressBar.style.width = progress + "%";
 
-        // Comprueba si se ha ganado
         if (progress >= 100) {
             win();
         } else {
-            // Si no hemos ganado, solicita el siguiente fotograma para continuar el bucle
             gameLoopId = requestAnimationFrame(gameLoop);
         }
     }
 
     function win() {
-        // Detiene el bucle de juego
         if (gameLoopId) {
             cancelAnimationFrame(gameLoopId);
+        }
+        // (NUEVO) Limpia el temporizador del objetivo
+        if (changeTargetInterval) {
+            clearInterval(changeTargetInterval);
         }
         gameActive = false;
         winMsg.style.display = "block";
@@ -200,32 +219,29 @@
     }
 
     startBtn.addEventListener("click", () => {
-        // Función para pedir permiso en iOS
         const startTheGame = () => {
             gameActive = true;
-            startBtn.textContent = "Giroscopio Activado";
+            startBtn.textContent = "¡A por ello!";
             startBtn.disabled = true;
             window.addEventListener("deviceorientation", handleOrientation);
             
-            // --- INICIA EL BUCLE DE JUEGO ---
-            lastTimestamp = 0; // Resetea el timestamp
+            // --- INICIA EL MOVIMIENTO DEL OBJETIVO Y EL BUCLE DE JUEGO ---
+            // Le decimos que cambie de destino cada 3 segundos (3000 ms)
+            changeTargetInterval = setInterval(setNewTargetDestination, 3000);
+
+            lastTimestamp = 0;
             gameLoopId = requestAnimationFrame(gameLoop);
         };
 
         if (typeof DeviceOrientationEvent.requestPermission === "function") {
-            DeviceOrientationEvent.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    startTheGame();
-                } else {
-                    alert("Permiso denegado. El juego no puede funcionar sin el giroscopio.");
-                }
+            DeviceOrientationEvent.requestPermission().then(p => {
+                if (p === "granted") startTheGame();
+                else alert("Permiso denegado. El juego no puede funcionar.");
             });
         } else {
             startTheGame();
         }
     });
-
-    // LAS FUNCIONES startProgress Y stopProgress HAN SIDO ELIMINADAS
 </script>
 
 </body>

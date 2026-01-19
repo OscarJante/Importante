@@ -104,19 +104,22 @@
     const winMsg = document.getElementById("winMsg");
     const startBtn = document.getElementById("startBtn");
 
-    const tubeHeight = tube.clientHeight; // Usar clientHeight para ser más preciso
+    const tubeHeight = tube.clientHeight;
     const bubbleSize = bubble.offsetHeight;
     const targetSize = target.offsetHeight;
 
+    // --- NUEVAS VARIABLES PARA EL BUCLE DE JUEGO ---
+    let gameLoopId = null; // ID para poder detener el bucle
+    let lastTimestamp = 0; // Para calcular el tiempo entre fotogramas (deltaTime)
+    const PROGRESS_RATE = 20; // Puntos de progreso por segundo (100% en 5 segundos)
+
+    // --- VARIABLES DE ESTADO ---
     let progress = 0;
     let holding = false; // Estado: ¿estamos manteniendo la posición?
-    let interval = null;
-    let gameActive = false; // Para evitar que se mueva antes de hacer clic
+    let gameActive = false;
 
-    // Margen humano razonable (px)
     const tolerance = 12;
 
-    // Colocar objetivo en una posición aleatoria
     function placeTarget() {
         const min = 20;
         const max = tubeHeight - targetSize - 20;
@@ -125,97 +128,104 @@
     }
     placeTarget();
 
-    // Mover burbuja según la inclinación del dispositivo
     function handleOrientation(event) {
         if (!gameActive) return;
 
-        // beta = inclinación frontal (-90 a 90)
         let beta = event.beta;
-        
-        // Limitar el ángulo para que no sea demasiado sensible
         beta = Math.max(-45, Math.min(45, beta));
 
-        const normalized = (beta + 45) / 90; // Normaliza el valor de 0.0 a 1.0
+        const normalized = (beta + 45) / 90;
         const y = normalized * (tubeHeight - bubbleSize);
-
         bubble.style.top = y + "px";
 
         checkAlignment(y);
     }
-
-    // Comprobar si la burbuja está alineada con el objetivo
+    
+    // ESTA FUNCIÓN AHORA SOLO CAMBIA EL ESTADO 'holding'
     function checkAlignment(bubbleY) {
         const targetCenter = target.offsetTop + (targetSize / 2);
         const bubbleCenter = bubbleY + (bubbleSize / 2);
-
         const diff = Math.abs(targetCenter - bubbleCenter);
 
-        if (diff <= tolerance) {
-            // ESTAMOS DENTRO del objetivo
-            if (!holding) { // Si no estábamos "manteniendo", empezamos ahora.
-                startProgress();
-            }
+        // Cambiamos el estado 'holding' según la posición.
+        // El gameLoop se encargará del resto.
+        holding = (diff <= tolerance);
+    }
+
+    // --- EL NUEVO CORAZÓN DEL JUEGO ---
+    function gameLoop(currentTimestamp) {
+        // Inicializa el timestamp en el primer fotograma
+        if (lastTimestamp === 0) {
+            lastTimestamp = currentTimestamp;
+        }
+
+        // Calcula el tiempo pasado en segundos
+        const deltaTime = (currentTimestamp - lastTimestamp) / 1000;
+        lastTimestamp = currentTimestamp;
+
+        // Calcula cuánto debe cambiar el progreso en este fotograma
+        const progressChange = PROGRESS_RATE * deltaTime;
+
+        // Aumenta o disminuye el progreso según el estado 'holding'
+        if (holding) {
+            progress += progressChange;
         } else {
-            // ESTAMOS FUERA del objetivo
-            if (holding) { // Si antes estábamos "manteniendo", ahora dejamos de hacerlo.
-                stopProgress();
-            }
+            progress -= progressChange;
+        }
+
+        // Asegura que el progreso se mantenga entre 0 y 100
+        progress = Math.max(0, Math.min(100, progress));
+
+        // Actualiza la barra de progreso en la UI
+        progressBar.style.width = progress + "%";
+
+        // Comprueba si se ha ganado
+        if (progress >= 100) {
+            win();
+        } else {
+            // Si no hemos ganado, solicita el siguiente fotograma para continuar el bucle
+            gameLoopId = requestAnimationFrame(gameLoop);
         }
     }
 
-    // Iniciar el contador de progreso
-    function startProgress() {
-        holding = true;
-        // Limpiamos cualquier intervalo previo por seguridad
-        clearInterval(interval);
-        
-        interval = setInterval(() => {
-            progress += 20; // Aumenta un 20% cada segundo
-            progressBar.style.width = progress + "%";
-
-            if (progress >= 100) {
-                win();
-            }
-        }, 1000);
-    }
-
-    // Detener el progreso y reiniciarlo
-    function stopProgress() {
-        holding = false;
-        clearInterval(interval);
-        progress = 0; // El castigo por fallar es un reinicio instantáneo
-        progressBar.style.width = "0%";
-    }
-
-    // Función a llamar cuando se gana
     function win() {
-        clearInterval(interval);
+        // Detiene el bucle de juego
+        if (gameLoopId) {
+            cancelAnimationFrame(gameLoopId);
+        }
         gameActive = false;
         winMsg.style.display = "block";
-        startBtn.style.display = "none"; // Ocultar el botón al ganar
+        startBtn.style.display = "none";
         window.removeEventListener("deviceorientation", handleOrientation);
     }
 
-    // Manejador del botón para solicitar permisos en iOS y activar el juego
     startBtn.addEventListener("click", () => {
-        gameActive = true;
-        startBtn.textContent = "Giroscopio Activado";
-        startBtn.disabled = true;
+        // Función para pedir permiso en iOS
+        const startTheGame = () => {
+            gameActive = true;
+            startBtn.textContent = "Giroscopio Activado";
+            startBtn.disabled = true;
+            window.addEventListener("deviceorientation", handleOrientation);
+            
+            // --- INICIA EL BUCLE DE JUEGO ---
+            lastTimestamp = 0; // Resetea el timestamp
+            gameLoopId = requestAnimationFrame(gameLoop);
+        };
 
-        // Necesario para iOS 13+
         if (typeof DeviceOrientationEvent.requestPermission === "function") {
             DeviceOrientationEvent.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    window.addEventListener("deviceorientation", handleOrientation);
+                    startTheGame();
                 } else {
                     alert("Permiso denegado. El juego no puede funcionar sin el giroscopio.");
                 }
             });
         } else {
-            // Para dispositivos Android y otros que no necesitan permiso explícito
-            window.addEventListener("deviceorientation", handleOrientation);
+            startTheGame();
         }
     });
+
+    // LAS FUNCIONES startProgress Y stopProgress HAN SIDO ELIMINADAS
 </script>
 
 </body>

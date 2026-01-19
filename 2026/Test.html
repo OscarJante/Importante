@@ -153,7 +153,9 @@ function checkAlignment(bubbleY) {
 
 // progreso de 5 segundos
 function startProgress() {
+    clearInterval(interval);
     holding = true;
+
     interval = setInterval(() => {
         progress += 20;
         progressBar.style.width = progress + "%";

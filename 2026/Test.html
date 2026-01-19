@@ -126,10 +126,10 @@ placeTarget();
 // mover burbuja según giroscopio
 function handleOrientation(event) {
     // gamma = inclinación frontal (-90 a 90)
-    let gamma = event.gamma;
-    gamma = Math.max(-45, Math.min(45, gamma));
+    let beta = event.beta;
+    beta = Math.max(-45, Math.min(45, beta));
 
-    const normalized = (gamma + 45) / 90;
+    const normalized = (beta + 45) / 90;
     const y = normalized * (tubeHeight - bubbleSize);
 
     bubble.style.top = y + "px";

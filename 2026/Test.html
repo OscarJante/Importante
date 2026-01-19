@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Vertical Bubble Level</title>
+
+<style>
+    body {
+        margin: 0;
+        background: #fff;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+
+    h3 {
+        margin-bottom: 10px;
+    }
+
+    .tube {
+        position: relative;
+        width: 70px;
+        height: 320px;
+        border: 3px solid #333;
+        border-radius: 40px;
+        display: flex;
+        justify-content: center;
+        background: #fafafa;
+    }
+
+    .target {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border: 3px dashed #333;
+        border-radius: 50%;
+    }
+
+    .bubble {
+        position: absolute;
+        width: 36px;
+        height: 36px;
+        background: #2b82ff;
+        border-radius: 50%;
+    }
+
+    .progress-container {
+        width: 200px;
+        height: 20px;
+        border: 2px solid #000;
+        margin-top: 20px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: black;
+        transition: width 0.2s linear;
+    }
+
+    button {
+        margin-top: 15px;
+        padding: 10px 16px;
+        font-size: 16px;
+    }
+
+    .win {
+        margin-top: 15px;
+        font-size: 20px;
+        font-weight: bold;
+        color: green;
+    }
+</style>
+</head>
+
+<body>
+
+<h3>Vertical Bubble Level</h3>
+
+<div class="tube" id="tube">
+    <div class="target" id="target"></div>
+    <div class="bubble" id="bubble"></div>
+</div>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progress"></div>
+</div>
+
+<button id="startBtn">Activar giroscopio</button>
+
+<div class="win" id="winMsg" style="display:none;">
+    ¡Nivel completado!
+</div>
+
+<script>
+const tube = document.getElementById("tube");
+const bubble = document.getElementById("bubble");
+const target = document.getElementById("target");
+const progressBar = document.getElementById("progress");
+const winMsg = document.getElementById("winMsg");
+
+const tubeHeight = 320;
+const bubbleSize = 36;
+const targetSize = 40;
+
+let progress = 0;
+let holding = false;
+let interval = null;
+
+// margen humano razonable (px)
+const tolerance = 12;
+
+// objetivo aleatorio
+function placeTarget() {
+    const min = 20;
+    const max = tubeHeight - targetSize - 20;
+    const y = Math.random() * (max - min) + min;
+    target.style.top = y + "px";
+}
+placeTarget();
+
+// mover burbuja según giroscopio
+function handleOrientation(event) {
+    // gamma = inclinación frontal (-90 a 90)
+    let gamma = event.gamma;
+    gamma = Math.max(-45, Math.min(45, gamma));
+
+    const normalized = (gamma + 45) / 90;
+    const y = normalized * (tubeHeight - bubbleSize);
+
+    bubble.style.top = y + "px";
+
+    checkAlignment(y);
+}
+
+// comprobar alineación
+function checkAlignment(bubbleY) {
+    const targetY = target.offsetTop + targetSize / 2;
+    const bubbleCenter = bubbleY + bubbleSize / 2;
+
+    const diff = Math.abs(targetY - bubbleCenter);
+
+    if (diff <= tolerance) {
+        if (!holding) startProgress();
+    } else {
+        resetProgress();
+    }
+}
+
+// progreso de 5 segundos
+function startProgress() {
+    holding = true;
+    interval = setInterval(() => {
+        progress += 20;
+        progressBar.style.width = progress + "%";
+
+        if (progress >= 100) {
+            win();
+        }
+    }, 1000);
+}
+
+function resetProgress() {
+    holding = false;
+    clearInterval(interval);
+    progress = 0;
+    progressBar.style.width = "0%";
+}
+
+function win() {
+    clearInterval(interval);
+    winMsg.style.display = "block";
+    window.removeEventListener("deviceorientation", handleOrientation);
+}
+
+// botón (iOS)
+document.getElementById("startBtn").addEventListener("click", () => {
+    if (typeof DeviceOrientationEvent.requestPermission === "function") {
+        DeviceOrientationEvent.requestPermission().then(permission => {
+            if (permission === "granted") {
+                window.addEventListener("deviceorientation", handleOrientation);
+            }
+        });
+    } else {
+        window.addEventListener("deviceorientation", handleOrientation);
+    }
+});
+</script>
+
+</body>
+</html>

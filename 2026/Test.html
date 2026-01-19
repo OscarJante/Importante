@@ -165,10 +165,19 @@ function startProgress() {
 }
 
 function resetProgress() {
+    if (!holding && progress === 0) return;
+
     holding = false;
     clearInterval(interval);
-    progress = 0;
-    progressBar.style.width = "0%";
+
+    interval = setInterval(() => {
+        progress -= 20;
+        if (progress <= 0) {
+            progress = 0;
+            clearInterval(interval);
+        }
+        progressBar.style.width = progress + "%";
+    }, 1000);
 }
 
 function win() {

@@ -16,6 +16,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
+    text-align: center;
 }
 
 h3 {
@@ -30,7 +31,6 @@ h3 {
     overflow: hidden;
 }
 
-/* Cámara */
 #camera {
     position: absolute;
     width: 100%;
@@ -41,7 +41,6 @@ h3 {
     z-index: 0;
 }
 
-/* Mitad verde */
 .half-shape {
     position: absolute;
     width: 120px;
@@ -52,7 +51,6 @@ h3 {
     z-index: 2;
 }
 
-/* Punto central */
 .center-dot {
     position: absolute;
     width: 10px;
@@ -65,7 +63,6 @@ h3 {
     z-index: 3;
 }
 
-/* Barra progreso */
 .progress-container {
     width: 220px;
     height: 18px;
@@ -91,6 +88,24 @@ button {
     color: lime;
     display: none;
 }
+
+/* --> NUEVO: Estilos para el panel de depuración */
+.debug-panel {
+    margin-top: 20px;
+    background: #222;
+    padding: 10px;
+    border-radius: 5px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    width: 220px;
+}
+.debug-panel div {
+    display: flex;
+    justify-content: space-between;
+}
+.debug-panel .target {
+    color: cyan;
+}
 </style>
 </head>
 
@@ -108,15 +123,24 @@ button {
     <div class="progress-bar" id="progress"></div>
 </div>
 
-<button id="startBtn">Iniciwwar</button>
+<!-- --> NUEVO: Panel para mostrar los valores del sensor -->
+<div class="debug-panel" id="debugPanel" style="display: none;">
+    <div><span>ALPHA:</span> <span id="alphaVal">0.00</span> <span class="target">(1.16)</span></div>
+    <div><span>BETA:</span> <span id="betaVal">0.00</span> <span class="target">(-5.34)</span></div>
+    <div><span>GAMMA:</span> <span id="gammaVal">0.00</span> <span class="target">(8.05)</span></div>
+</div>
+
+<button id="startBtn">Iniciar</button> <!-- Corregido "Iniciwwar" -->
 
 <div class="win" id="winMsg">✔ Alineación correcta</div>
 
 <script>
+// --- AJUSTA ESTOS VALORES ---
 const TARGET_BETA  = -5.34;
 const TARGET_GAMMA = 8.05;
-const TARGET_ALPHA = 1.16; // NUEVO
-const TOLERANCE = 4;
+const TARGET_ALPHA = 1.16;
+const TOLERANCE = 5; // --> Aumenté la tolerancia un poco para que sea más fácil al principio
+// -----------------------------
 
 const HOLD_TIME = 5; // segundos
 const PROGRESS_RATE = 100 / HOLD_TIME;
@@ -133,12 +157,23 @@ const startBtn = document.getElementById("startBtn");
 const overlayShape = document.getElementById("overlayShape");
 const video = document.getElementById("camera");
 
+// --> NUEVO: Referencias a los elementos de depuración
+const debugPanel = document.getElementById("debugPanel");
+const alphaValEl = document.getElementById("alphaVal");
+const betaValEl = document.getElementById("betaVal");
+const gammaValEl = document.getElementById("gammaVal");
+
 async function startCamera() {
-    const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } },
-        audio: false
-    });
-    video.srcObject = stream;
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: "environment" } },
+            audio: false
+        });
+        video.srcObject = stream;
+    } catch (err) {
+        console.error("Error al acceder a la cámara:", err);
+        alert("No se pudo iniciar la cámara. Asegúrate de dar los permisos.");
+    }
 }
 
 function handleOrientation(e) {
@@ -148,9 +183,19 @@ function handleOrientation(e) {
     const gamma = e.gamma;
     const alpha = e.alpha;
 
+    // --> NUEVO: Actualizar el panel de depuración en tiempo real
+    alphaValEl.textContent = alpha.toFixed(2);
+    betaValEl.textContent = beta.toFixed(2);
+    gammaValEl.textContent = gamma.toFixed(2);
+
     const betaOk  = Math.abs(beta  - TARGET_BETA)  <= TOLERANCE;
     const gammaOk = Math.abs(gamma - TARGET_GAMMA) <= TOLERANCE;
     const alphaOk = Math.abs(alpha - TARGET_ALPHA) <= TOLERANCE;
+    
+    // --> NUEVO: Cambia el color de los valores si están dentro de la tolerancia
+    betaValEl.style.color  = betaOk  ? 'lime' : 'white';
+    gammaValEl.style.color = gammaOk ? 'lime' : 'white';
+    alphaValEl.style.color = alphaOk ? 'lime' : 'white';
 
     holding = betaOk && gammaOk && alphaOk;
 
@@ -169,7 +214,7 @@ function loop(timestamp) {
     if (holding) {
         progress += change;
     } else {
-        progress -= change * 1.5;
+        progress -= change * 1.5; // La barra baja más rápido de lo que sube
     }
 
     progress = Math.max(0, Math.min(100, progress));
@@ -187,24 +232,36 @@ function win() {
     gameActive = false;
     winMsg.style.display = "block";
     startBtn.style.display = "none";
+    debugPanel.style.display = "none"; // --> NUEVO: Ocultar el panel al ganar
     window.removeEventListener("deviceorientation", handleOrientation);
 }
 
 startBtn.addEventListener("click", async () => {
+    // Primero intentamos iniciar la cámara
     await startCamera();
 
     const startGame = () => {
         gameActive = true;
-        startBtn.disabled = true;
+        startBtn.style.display = 'none'; // --> NUEVO: Ocultar botón al iniciar
+        debugPanel.style.display = 'block'; // --> NUEVO: Mostrar el panel de depuración
         window.addEventListener("deviceorientation", handleOrientation);
         rafId = requestAnimationFrame(loop);
     };
 
-    if (typeof DeviceOrientationEvent.requestPermission === "function") {
-        const res = await DeviceOrientationEvent.requestPermission();
-        if (res === "granted") startGame();
-        else alert("Permiso de sensores requerido");
+    // Luego pedimos permisos para los sensores de orientación (necesario en iOS)
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === "function") {
+        try {
+            const res = await DeviceOrientationEvent.requestPermission();
+            if (res === "granted") {
+                startGame();
+            } else {
+                alert("Permiso de sensores requerido para jugar.");
+            }
+        } catch (err) {
+            alert("No se pudieron solicitar los permisos para los sensores.");
+        }
     } else {
+        // En Android y otros dispositivos, no se necesita pedir permiso explícito
         startGame();
     }
 });

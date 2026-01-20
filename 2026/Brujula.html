@@ -6,63 +6,101 @@
 <title>Guía por Coordenadas</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-}
+    body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background: #f0f0f0;
+        color: #333;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        height: 100vh;
+        -webkit-tap-highlight-color: transparent; /* Evita el destello azul al tocar en móviles */
+    }
 
-h3 {
-    margin-bottom: 10px;
-}
+    h3 {
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
 
-.compass {
-    position: relative;
-    width: 220px;
-    height: 220px;
-    border: 4px solid #000;
-    border-radius: 50%;
-}
+    .compass {
+        position: relative;
+        width: 220px;
+        height: 220px;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.arrow {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 6px;
-    height: 90px;
-    background: red;
-    transform-origin: bottom center;
-    transform: translate(-50%, -100%) rotate(0deg);
-    border-radius: 3px;
-}
+    .arrow {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 8px;
+        height: 90px;
+        background: #e44d26; /* Un rojo más moderno */
+        transform-origin: bottom center;
+        /* La rotación se aplica dinámicamente con JS */
+        transform: translate(-50%, -100%) rotate(0deg);
+        border-radius: 4px 4px 0 0;
+        /* Transición para suavizar cualquier cambio brusco remanente */
+        transition: transform 0.1s linear; 
+    }
+    .arrow::after { /* Punta de la flecha */
+        content: '';
+        position: absolute;
+        left: -8px;
+        top: -16px;
+        border-left: 12px solid transparent;
+        border-right: 12px solid transparent;
+        border-bottom: 16px solid #e44d26;
+    }
 
-.center {
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    background: black;
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
+    .center {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: #333;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+    }
 
-.distance {
-    margin-top: 15px;
-    font-size: 20px;
-    font-weight: bold;
-}
+    #status, #distance {
+        margin-top: 20px;
+        font-size: 1.2em;
+    }
+    
+    #distance {
+        font-weight: bold;
+    }
 
-button {
-    margin-top: 15px;
-    padding: 10px 16px;
-    font-size: 16px;
-}
+    button {
+        margin-top: 25px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        transition: background-color 0.2s, transform 0.1s;
+    }
+    
+    button:active {
+        transform: scale(0.98);
+        background-color: #0056b3;
+    }
 </style>
 </head>
 
@@ -75,116 +113,197 @@ button {
     <div class="center"></div>
 </div>
 
-<div class="distance" id="distance">
-    Distancia: ---
-</div>
+<div id="status">Presiona "Iniciar" para comenzar</div>
+<div class="distance" id="distance"></div>
 
 <button id="startBtn">Iniciar guía</button>
 
 <script>
-const TARGET_LAT = 21.126843;
-const TARGET_LON = -101.643937;
+    // --- CONFIGURACIÓN ---
+    const TARGET_LAT = 21.126843;
+    const TARGET_LON = -101.643937;
 
-let currentLat = null;
-let currentLon = null;
-let deviceHeading = 0;
+    // --- ESTADO DE LA APLICACIÓN ---
+    let currentLat = null;
+    let currentLon = null;
+    let deviceHeading = 0; // Orientación del dispositivo (0-360)
+    let targetBearing = 0; // Rumbo hacia el objetivo (0-360)
+    let animationFrameId = null;
 
-const arrow = document.getElementById("arrow");
-const distanceEl = document.getElementById("distance");
-const startBtn = document.getElementById("startBtn");
+    // --- ELEMENTOS DEL DOM ---
+    const arrow = document.getElementById("arrow");
+    const distanceEl = document.getElementById("distance");
+    const statusEl = document.getElementById("status");
+    const startBtn = document.getElementById("startBtn");
 
-/* ------------------ GEOLOCALIZACIÓN ------------------ */
-function startGPS() {
-    navigator.geolocation.watchPosition(pos => {
+    /**
+     * Inicia los sensores y la lógica de la aplicación.
+     */
+    function startGuidance() {
+        startBtn.style.display = "none";
+        statusEl.textContent = "Solicitando permisos...";
+
+        const startSensors = () => {
+            statusEl.textContent = "Buscando señal GPS...";
+            startGPS();
+            
+            // Usar 'deviceorientationabsolute' si está disponible (ignora la declinación magnética),
+            // si no, usar 'deviceorientation'.
+            const orientationEvent = 'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation';
+            window.addEventListener(orientationEvent, handleOrientation, true);
+
+            // Iniciar el bucle de animación
+            if (!animationFrameId) {
+                animationFrameId = requestAnimationFrame(updateAnimation);
+            }
+        };
+
+        // --- Gestión de permisos para iOS 13+ ---
+        if (typeof DeviceOrientationEvent?.requestPermission === "function") {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === "granted") {
+                        startSensors();
+                    } else {
+                        statusEl.textContent = "Permiso de orientación denegado.";
+                        alert("Para que la brújula funcione, necesitas conceder el permiso de acceso a los sensores de movimiento.");
+                    }
+                })
+                .catch(console.error);
+        } else {
+            // Para Android y otros navegadores que no requieren permiso explícito
+            startSensors();
+        }
+    }
+
+    /**
+     * Inicia el seguimiento de la geolocalización.
+     */
+    function startGPS() {
+        if (!navigator.geolocation) {
+           statusEl.textContent = "Geolocalización no soportada.";
+           return;
+        }
+        navigator.geolocation.watchPosition(updatePosition, handleGPSError, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 1000
+        });
+    }
+
+    /**
+     * Callback para cuando se obtiene una nueva posición GPS.
+     * Actualiza los cálculos dependientes de la posición.
+     * @param {GeolocationPosition} pos
+     */
+    function updatePosition(pos) {
         currentLat = pos.coords.latitude;
         currentLon = pos.coords.longitude;
-        updateDistanceAndDirection();
-    }, err => {
-        alert("No se pudo obtener GPS");
-    }, {
-        enableHighAccuracy: true,
-        maximumAge: 1000
-    });
-}
+        
+        statusEl.textContent = "¡Guía activa!"; // Oculta otros mensajes una vez que tenemos GPS
 
-/* ------------------ BRÚJULA ------------------ */
-function handleOrientation(event) {
-    if (event.webkitCompassHeading !== undefined) {
-        deviceHeading = event.webkitCompassHeading; // iOS
-    } else {
-        deviceHeading = 360 - event.alpha; // Android
+        const distance = calculateDistance(currentLat, currentLon, TARGET_LAT, TARGET_LON);
+        distanceEl.textContent = `Distancia: ${distance.toFixed(1)} m`;
+
+        targetBearing = calculateBearing(currentLat, currentLon, TARGET_LAT, TARGET_LON);
     }
-    updateDistanceAndDirection();
-}
-
-/* ------------------ CÁLCULOS ------------------ */
-function toRad(deg) {
-    return deg * Math.PI / 180;
-}
-
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371000;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-
-    const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) ** 2;
-
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
-function calculateBearing(lat1, lon1, lat2, lon2) {
-    const y = Math.sin(toRad(lon2 - lon1)) * Math.cos(toRad(lat2));
-    const x =
-        Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) -
-        Math.sin(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.cos(toRad(lon2 - lon1));
-
-    return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-}
-
-function updateDistanceAndDirection() {
-    if (currentLat === null || deviceHeading === null) return;
-
-    const distance = calculateDistance(
-        currentLat, currentLon,
-        TARGET_LAT, TARGET_LON
-    );
-
-    distanceEl.textContent = `Distancia: ${distance.toFixed(1)} m`;
-
-    const bearing = calculateBearing(
-        currentLat, currentLon,
-        TARGET_LAT, TARGET_LON
-    );
-
-    const direction = bearing - deviceHeading;
-    arrow.style.transform =
-        `translate(-50%, -100%) rotate(${direction}deg)`;
-}
-
-/* ------------------ INICIO ------------------ */
-startBtn.addEventListener("click", () => {
-    const start = () => {
-        startBtn.style.display = "none";
-        startGPS();
-        window.addEventListener("deviceorientationabsolute", handleOrientation);
-        window.addEventListener("deviceorientation", handleOrientation);
-    };
-
-    if (typeof DeviceOrientationEvent?.requestPermission === "function") {
-        DeviceOrientationEvent.requestPermission().then(p => {
-            if (p === "granted") start();
-            else alert("Permiso denegado");
-        });
-    } else {
-        start();
+    
+    /**
+     * Maneja errores de geolocalización.
+     * @param {GeolocationPositionError} err
+     */
+    function handleGPSError(err) {
+        statusEl.textContent = "Error de GPS: " + err.message;
     }
-});
+
+    /**
+     * Callback para cuando cambia la orientación del dispositivo.
+     * Solo actualiza el valor del heading.
+     * @param {DeviceOrientationEvent} event
+     */
+    function handleOrientation(event) {
+        // event.webkitCompassHeading es para iOS. Es más directo.
+        if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
+            deviceHeading = event.webkitCompassHeading;
+        } 
+        // event.alpha es para Android. Es la rotación en el eje Z (0-360).
+        // A menudo, se necesita un ajuste con `360 - alpha`.
+        else if (event.alpha !== undefined && event.alpha !== null) {
+             // El 'absolute' en el evento ya debería dar el norte geográfico.
+            deviceHeading = (360 - event.alpha) % 360;
+        }
+    }
+
+    /**
+     * Bucle de animación principal. Se ejecuta en cada fotograma.
+     * Calcula la rotación final de la flecha y la aplica.
+     */
+    function updateAnimation() {
+        if (currentLat !== null) { // Solo rotar si ya tenemos una ubicación
+            const finalDirection = targetBearing - deviceHeading;
+            arrow.style.transform = `translate(-50%, -100%) rotate(${finalDirection}deg)`;
+        }
+        
+        // Continuar el bucle
+        animationFrameId = requestAnimationFrame(updateAnimation);
+    }
+
+
+    // --- FUNCIONES MATEMÁTICAS ---
+    
+    /**
+     * Convierte grados a radianes.
+     * @param {number} deg Grados
+     * @returns {number} Radianes
+     */
+    function toRad(deg) {
+        return deg * Math.PI / 180;
+    }
+
+    /**
+     * Calcula la distancia entre dos puntos GPS usando la fórmula de Haversine.
+     * https://en.wikipedia.org/wiki/Haversine_formula
+     * @returns {number} Distancia en metros.
+     */
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371e3; // Radio de la Tierra en metros
+        const phi1 = toRad(lat1);
+        const phi2 = toRad(lat2);
+        const deltaPhi = toRad(lat2 - lat1);
+        const deltaLambda = toRad(lon2 - lon1);
+
+        const a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+                  Math.cos(phi1) * Math.cos(phi2) *
+                  Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+        
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c; // en metros
+    }
+
+    /**
+     * Calcula el rumbo inicial (bearing) de un punto a otro.
+     * https://www.movable-type.co.uk/scripts/latlong.html
+     * @returns {number} Rumbo en grados (0-360).
+     */
+    function calculateBearing(lat1, lon1, lat2, lon2) {
+        const phi1 = toRad(lat1);
+        const lambda1 = toRad(lon1);
+        const phi2 = toRad(lat2);
+        const lambda2 = toRad(lon2);
+
+        const y = Math.sin(lambda2 - lambda1) * Math.cos(phi2);
+        const x = Math.cos(phi1) * Math.sin(phi2) -
+                  Math.sin(phi1) * Math.cos(phi2) * Math.cos(lambda2 - lambda1);
+        
+        const theta = Math.atan2(y, x); // en radianes
+        
+        return (theta * 180 / Math.PI + 360) % 360; // en grados
+    }
+    
+    // --- INICIO ---
+    startBtn.addEventListener("click", startGuidance);
+
 </script>
 
 </body>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Alineación Visual</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #000;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+h3 {
+    margin-bottom: 10px;
+}
+
+.overlay {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    border: 2px dashed rgba(255,255,255,0.4);
+    margin-bottom: 15px;
+}
+
+/* Media figura verde */
+.half-shape {
+    position: absolute;
+    width: 110px;
+    height: 220px;
+    background: rgba(0,255,0,0.45);
+    left: 0;
+    top: 0;
+}
+
+/* Indicador central */
+.center-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: white;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.progress-container {
+    width: 220px;
+    height: 16px;
+    border: 2px solid white;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: lime;
+    transition: width 0.15s linear;
+}
+
+.message {
+    margin-top: 12px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px 18px;
+    font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<h3>Alinea las dos mitades</h3>
+
+<div class="overlay">
+    <div class="half-shape"></div>
+    <div class="center-dot"></div>
+</div>
+
+<div class="progress-container">
+    <div class="progress-bar" id="progress"></div>
+</div>
+
+<div class="message" id="msg">Ajusta el teléfono</div>
+
+<button id="startBtn">Iniciar</button>
+
+<script>
+/* ===== VALORES OBJETIVO ===== */
+const TARGET_BETA  = 6.11;
+const TARGET_GAMMA = 7.60;
+
+/* ===== TOLERANCIAS ===== */
+const BETA_TOLERANCE  = 3.5;
+const GAMMA_TOLERANCE = 3.5;
+
+/* ===== PROGRESO ===== */
+let progress = 0;
+let holding = false;
+let gameActive = false;
+let rafId = null;
+let lastTime = 0;
+
+const progressBar = document.getElementById("progress");
+const msg = document.getElementById("msg");
+const startBtn = document.getElementById("startBtn");
+
+function handleOrientation(event) {
+    if (!gameActive) return;
+
+    const beta  = event.beta;
+    const gamma = event.gamma;
+
+    const betaOk  = Math.abs(beta  - TARGET_BETA)  < BETA_TOLERANCE;
+    const gammaOk = Math.abs(gamma - TARGET_GAMMA) < GAMMA_TOLERANCE;
+
+    holding = betaOk && gammaOk;
+}
+
+function gameLoop(t) {
+    if (!lastTime) lastTime = t;
+    const dt = (t - lastTime) / 1000;
+    lastTime = t;
+
+    if (holding) {
+        progress += 40 * dt;   // ~2.5s para completar
+        msg.textContent = "¡Casi!";
+    } else {
+        progress -= 60 * dt;
+        msg.textContent = "Ajusta el teléfono";
+    }
+
+    progress = Math.max(0, Math.min(100, progress));
+    progressBar.style.width = progress + "%";
+
+    if (progress >= 100) {
+        win();
+    } else {
+        rafId = requestAnimationFrame(gameLoop);
+    }
+}
+
+function win() {
+    cancelAnimationFrame(rafId);
+    gameActive = false;
+    msg.textContent = "✔ Encaje perfecto";
+    progressBar.style.width = "100%";
+
+    if (navigator.vibrate) {
+        navigator.vibrate([120, 60, 120]);
+    }
+
+    window.removeEventListener("deviceorientation", handleOrientation);
+}
+
+startBtn.addEventListener("click", () => {
+    const startGame = () => {
+        startBtn.style.display = "none";
+        gameActive = true;
+        progress = 0;
+        lastTime = 0;
+        window.addEventListener("deviceorientation", handleOrientation);
+        rafId = requestAnimationFrame(gameLoop);
+    };
+
+    if (typeof DeviceOrientationEvent?.requestPermission === "function") {
+        DeviceOrientationEvent.requestPermission().then(p => {
+            if (p === "granted") startGame();
+            else alert("Permiso denegado");
+        });
+    } else {
+        startGame();
+    }
+});
+</script>
+
+</body>
+</html>

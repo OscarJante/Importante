@@ -192,7 +192,7 @@
         if (holding) {
             progress += progressChange;
         } else {
-            progress -= progressChange;
+            progress -= progressChange * 1.5;
         }
         progress = Math.max(0, Math.min(100, progress));
         progressBar.style.width = progress + "%";
@@ -227,7 +227,7 @@
             
             // --- INICIA EL MOVIMIENTO DEL OBJETIVO Y EL BUCLE DE JUEGO ---
             // Le decimos que cambie de destino cada 3 segundos (3000 ms)
-            changeTargetInterval = setInterval(setNewTargetDestination, 1800);
+            changeTargetInterval = setInterval(setNewTargetDestination, 1300);
 
             lastTimestamp = 0;
             gameLoopId = requestAnimationFrame(gameLoop);

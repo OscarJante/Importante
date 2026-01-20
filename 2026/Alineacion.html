@@ -113,8 +113,9 @@ button {
 <div class="win" id="winMsg">✔ Alineación correcta</div>
 
 <script>
-const TARGET_BETA = 6.11;
-const TARGET_GAMMA = 7.60;
+const TARGET_BETA  = -5.34;
+const TARGET_GAMMA = 8.05;
+const TARGET_ALPHA = 1.16; // NUEVO
 const TOLERANCE = 4;
 
 const HOLD_TIME = 5; // segundos
@@ -145,11 +146,13 @@ function handleOrientation(e) {
 
     const beta = e.beta;
     const gamma = e.gamma;
+    const alpha = e.alpha;
 
-    const betaOk = Math.abs(beta - TARGET_BETA) <= TOLERANCE;
+    const betaOk  = Math.abs(beta  - TARGET_BETA)  <= TOLERANCE;
     const gammaOk = Math.abs(gamma - TARGET_GAMMA) <= TOLERANCE;
+    const alphaOk = Math.abs(alpha - TARGET_ALPHA) <= TOLERANCE;
 
-    holding = betaOk && gammaOk;
+    holding = betaOk && gammaOk && alphaOk;
 
     overlayShape.style.background = holding
         ? "rgba(0,255,0,0.75)"

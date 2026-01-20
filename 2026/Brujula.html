@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Guía por Coordenadas</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+h3 {
+    margin-bottom: 10px;
+}
+
+.compass {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    border: 4px solid #000;
+    border-radius: 50%;
+}
+
+.arrow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 90px;
+    background: red;
+    transform-origin: bottom center;
+    transform: translate(-50%, -100%) rotate(0deg);
+    border-radius: 3px;
+}
+
+.center {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: black;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.distance {
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+button {
+    margin-top: 15px;
+    padding: 10px 16px;
+    font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<h3>Encuentra el punto 🎯</h3>
+
+<div class="compass">
+    <div class="arrow" id="arrow"></div>
+    <div class="center"></div>
+</div>
+
+<div class="distance" id="distance">
+    Distancia: ---
+</div>
+
+<button id="startBtn">Iniciar guía</button>
+
+<script>
+const TARGET_LAT = 21.126843;
+const TARGET_LON = -101.643937;
+
+let currentLat = null;
+let currentLon = null;
+let deviceHeading = 0;
+
+const arrow = document.getElementById("arrow");
+const distanceEl = document.getElementById("distance");
+const startBtn = document.getElementById("startBtn");
+
+/* ------------------ GEOLOCALIZACIÓN ------------------ */
+function startGPS() {
+    navigator.geolocation.watchPosition(pos => {
+        currentLat = pos.coords.latitude;
+        currentLon = pos.coords.longitude;
+        updateDistanceAndDirection();
+    }, err => {
+        alert("No se pudo obtener GPS");
+    }, {
+        enableHighAccuracy: true,
+        maximumAge: 1000
+    });
+}
+
+/* ------------------ BRÚJULA ------------------ */
+function handleOrientation(event) {
+    if (event.webkitCompassHeading !== undefined) {
+        deviceHeading = event.webkitCompassHeading; // iOS
+    } else {
+        deviceHeading = 360 - event.alpha; // Android
+    }
+    updateDistanceAndDirection();
+}
+
+/* ------------------ CÁLCULOS ------------------ */
+function toRad(deg) {
+    return deg * Math.PI / 180;
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+
+    const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) ** 2;
+
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function calculateBearing(lat1, lon1, lat2, lon2) {
+    const y = Math.sin(toRad(lon2 - lon1)) * Math.cos(toRad(lat2));
+    const x =
+        Math.cos(toRad(lat1)) * Math.sin(toRad(lat2)) -
+        Math.sin(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.cos(toRad(lon2 - lon1));
+
+    return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+}
+
+function updateDistanceAndDirection() {
+    if (currentLat === null || deviceHeading === null) return;
+
+    const distance = calculateDistance(
+        currentLat, currentLon,
+        TARGET_LAT, TARGET_LON
+    );
+
+    distanceEl.textContent = `Distancia: ${distance.toFixed(1)} m`;
+
+    const bearing = calculateBearing(
+        currentLat, currentLon,
+        TARGET_LAT, TARGET_LON
+    );
+
+    const direction = bearing - deviceHeading;
+    arrow.style.transform =
+        `translate(-50%, -100%) rotate(${direction}deg)`;
+}
+
+/* ------------------ INICIO ------------------ */
+startBtn.addEventListener("click", () => {
+    const start = () => {
+        startBtn.style.display = "none";
+        startGPS();
+        window.addEventListener("deviceorientationabsolute", handleOrientation);
+        window.addEventListener("deviceorientation", handleOrientation);
+    };
+
+    if (typeof DeviceOrientationEvent?.requestPermission === "function") {
+        DeviceOrientationEvent.requestPermission().then(p => {
+            if (p === "granted") start();
+            else alert("Permiso denegado");
+        });
+    } else {
+        start();
+    }
+});
+</script>
+
+</body>
+</html>

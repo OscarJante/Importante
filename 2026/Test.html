@@ -8,7 +8,7 @@
 <style>
     body {
         margin: 0;
-        background: #fff;
+        background: #d3dbd5;
         font-family: Arial, sans-serif;
         display: flex;
         flex-direction: column;
@@ -29,7 +29,7 @@
         border-radius: 40px;
         display: flex;
         justify-content: center;
-        background: #fafafa;
+        background: #e3e9e5;
     }
 
     .target {
@@ -58,7 +58,7 @@
     .progress-bar {
         height: 100%;
         width: 0%;
-        background: black;
+        background: #2b82ff;
         transition: width 0.2s linear;
     }
 
@@ -66,6 +66,10 @@
         margin-top: 15px;
         padding: 10px 16px;
         font-size: 16px;
+        background: #2c3e50;
+        border: none;
+      	border-radius: 5px;
+        color: white;
     }
 
     .win {
@@ -79,18 +83,18 @@
 
 <body>
 
-<h3>Vertical Bubble Level</h3>
-
 <div class="tube" id="tube">
     <div class="target" id="target"></div>
     <div class="bubble" id="bubble"></div>
 </div>
 
+<h3>Sincronizacion de sistema</h3>
+
 <div class="progress-container">
     <div class="progress-bar" id="progress"></div>
 </div>
 
-<button id="startBtn">Activar giroscopio</button>
+<button id="startBtn">Activar</button>
 
 <div class="win" id="winMsg" style="display:none;">
     ¡Nivel completado!

@@ -45,16 +45,10 @@ h3 {
     position: absolute;
     width: 120px;
     height: 240px;
+    background: rgba(25,30,0,0.45);
     left: 0;
     top: 0;
     z-index: 2;
-
-    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS08JbeYZ8ccPOp4Su1QuQ6xJueP1D-0XFYgA&s");
-    background-size: 240px 240px;   /* tamaño real de la imagen */
-    background-position: left center;
-    background-repeat: no-repeat;
-    opacity: 0.1;
-    mix-blend-mode: screen;
 }
 
 .center-dot {
@@ -205,9 +199,7 @@ function handleOrientation(e) {
 
     holding = betaOk && gammaOk;
 
-    overlayShape.style.background = holding
-        ? "rgba(0,255,0,0.75)"
-        : "rgba(0,255,0,0.35)";
+overlayShape.style.opacity = holding ? "0.4" : "0.15";
 }
 
 function loop(timestamp) {
@@ -246,13 +238,22 @@ startBtn.addEventListener("click", async () => {
     // Primero intentamos iniciar la cámara
     await startCamera();
 
-    const startGame = () => {
-        gameActive = true;
-        startBtn.style.display = 'none'; // --> NUEVO: Ocultar botón al iniciar
-        debugPanel.style.display = 'block'; // --> NUEVO: Mostrar el panel de depuración
-        window.addEventListener("deviceorientation", handleOrientation);
-        rafId = requestAnimationFrame(loop);
-    };
+const startGame = () => {
+    // 👉 CAMBIAR A IMAGEN AL INICIAR CÁMARA
+    overlayShape.style.backgroundImage =
+        "url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS08JbeYZ8ccPOp4Su1QuQ6xJueP1D-0XFYgA&s')";
+    overlayShape.style.backgroundSize = "240px 240px";
+    overlayShape.style.backgroundPosition = "left center";
+    overlayShape.style.backgroundRepeat = "no-repeat";
+    overlayShape.style.backgroundColor = "transparent";
+    overlayShape.style.opacity = "0.15";
+
+    gameActive = true;
+    startBtn.style.display = 'none';
+    debugPanel.style.display = 'block';
+    window.addEventListener("deviceorientation", handleOrientation);
+    rafId = requestAnimationFrame(loop);
+};
 
     // Luego pedimos permisos para los sensores de orientación (necesario en iOS)
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === "function") {
